@@ -291,15 +291,17 @@ class HTML {
 	}
 	// Genera estructuras tipo botones radio o checkbox a partir de un arreglo u objeto LIGA
 	private function opciones($tipo, $obj, $nombre, $props=false, $derecha=false) {
-		if (get_class($obj) == 'LIGA' && $obj->numCol() > 1) {
+		if (is_array($obj) && count($obj)) {
+			foreach ($obj as $k => $v) {
+				$etiq  = self::etiq_props($obj, 'input', $props, false, "type='$tipo' name='$nombre' value='$k'");
+				$label = self::etiq_props($obj, 'label', $props, false);
+				echo ($derecha) ? "$label$etiq</input> $v</label> " : "$label$v $etiq</input></label> ";
+			}
+		} elseif (get_class($obj) == 'LIGA' && $obj->numCol() > 1) {
 			$etiq  = self::etiq_props($obj, 'input', $props, false, "type='$tipo' name='$nombre' value='@[0]'");
 			$label = self::etiq_props($obj, 'label', $props, false);
 			$opcion  = ($derecha) ? "$label$etiq</input>@[1]</label> " : "$label@[1]$etiq</input></label> ";
 			$obj->registros($opcion);
-		} elseif (is_array($obj) && count($obj)) {
-			foreach ($obj as $k => $v) {
-				echo ($derecha) ? "<label><input type='$tipo' name='$nombre' value='$k'>$v</label> " : "<label>$v<input type='$tipo' name='$nombre' value='$k'></label> ";
-			}
 		}
 	}
 	// Genera un grupo de botones radio a partir del arreglo u objeto LIGA dado
