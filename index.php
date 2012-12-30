@@ -22,8 +22,8 @@
 </head>
 <body>
 <?php
-	$cols  = array('*','acción'=>'<a href="?borrar=@[id]">Borrar</a>');
-	$join = array('depende'=>$ptos);
+    $cols  = array('*','acción'=>'<a href="?borrar=@[0]">Borrar</a>');
+    $join = array('depende'=>$ptos);
     HTML::tabla($ptos, 'Puestos registrados', $cols, true, $join);
     
     $props = array('form'=>'method="POST" action="?accion=insertar"');

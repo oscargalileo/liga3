@@ -10,57 +10,53 @@
     // Crea una nueva instancia de conexión a MySQL a partir de los parámetros dados
     function __construct($s='127.0.0.1', $u='root', $p='', $b='') {
         if (empty(self::$conn)) {
-            if(!self::$conn = mysql_connect($s, $u, $p)) {
+            if(!self::$conn = new mysqli($s,$u,$p)) {
                 throw new Exception("[LIGA] Error de SQL al intentar conectar con $s $u $p");
             }
         }
         if (!empty($b)) {
-            $this->base = (mysql_select_db($b, self::$conn)) ? $b : null;
+            $this->base = (self::$conn->select_db($b)) ? $b : null;
         } else {
             $resp = $this->consulta('select database()');
-            $resp = mysql_fetch_row($resp);
+            $resp = $resp->fetch_row();
             $this->base = $resp[0];
         }
     }
     // Ejecuta una consulta SQL y obtiene el resultado o la cantidad de filas afectadas
     static function SQL($sql) {
-        mysql_query("SET NAMES 'utf8'");
-        $resp = mysql_query($sql, self::$conn);
-        if(mysql_error(self::$conn)) {
-            throw new Exception('[LIGA] Error de SQL: '.mysql_error(self::$conn)." con [$sql]");
+        self::$conn->query("SET NAMES 'utf8'");
+        $resp = self::$conn->query($sql);
+        if(self::$conn->error) {
+            throw new Exception('[LIGA] Error de SQL: '.self::$conn->error." con [$sql]");
         }
         if (strpos(strtolower($sql), 'select ') !== false || strpos(strtolower($sql), 'show ') !== false) {
             return $resp;
         }
-        return mysql_affected_rows(self::$conn);
+        return self::$conn->affected_rows;
     }
     // Obtiene la base de datos seleccionada o selecciona alguna
     function base($b='') {
         if (empty($b)) {
             return (!empty($this->base)) ? $this->base : false;
         } else {
-            if (mysql_select_db($b, self::$conn)) {
+            if (self::$conn->select_db($b)) {
                 $this->base = $b;
                 return $b;
             }
             return false;
         }
     }
-/*    // Obtiene la tabla seleccionada o selecciona una
-    function tabla($t='') {
-        return (empty($t)) ? $this->tabla : ($this->tabla = $t);
-    }//*/
     // Obtiene el resultado a partir de la consulta SQL dada o la cantidad de filas afectadas
     function consulta($sql) {
-        mysql_query("SET NAMES 'utf8'");
-        $resp = mysql_query($sql, self::$conn);
-        if(mysql_error(self::$conn)) {
-            throw new Exception('[LIGA] Error de SQL: '.mysql_error(self::$conn)." con [$sql]");
+        self::$conn->query("SET NAMES 'utf8'");
+        $resp = self::$conn->query($sql);
+        if(self::$conn->error) {
+            throw new Exception('[LIGA] Error de SQL: '.self::$conn->error." con [$sql]");
         }
         if (strpos(strtolower($sql), 'select ') !== false || strpos(strtolower($sql), 'show ') !== false) {
             return $resp;
         }
-        return mysql_affected_rows(self::$conn);
+        return self::$conn->affected_rows;
     }
     // Obtiene un arreglo con la base y tabla a partir de la consulta
     function base_tabla($sql) {
@@ -121,15 +117,22 @@
         }
         $res = $this->consulta($s);
         $cols = array();
-        while ($col = mysql_fetch_field($res)) {
-            $nom  = $col->name;
-            $null = ($col->not_null) ? false : true;
-            $num  = ($col->numeric) ? true : false;
-            $blob = ($col->blob) ? true : false;
-            $cols[$nom] = array('tabla'=>$col->table,'null'=>$null,'num'=>$num,'blob'=>$blob,'tipo'=>$col->type,'pri'=>false,'ai'=>false,'codif'=>false,'com'=>false,'max'=>0);
+        while ($col = $res->fetch_field()) {
+	    $nom  = $col->name;
+            $null = ($col->flags & 1) ? false : true;
+            $num  = ($col->flags & 32768) ? true : false;
+            $blob = ($col->flags & 16) ? true : false;
+	    $tipo = 'integer';
+	    $tipo = ($col->flags & 4 || $col->flags & 5 || $col->flags & 246) ? 'decimal' : $tipo;
+	    $tipo = ($col->flags & 10) ? 'date' : $tipo;
+	    $tipo = ($col->flags & 12) ? 'datetime' : $tipo;
+	    $tipo = ($col->flags & 7) ? 'timestamp' : $tipo;
+	    $tipo = ($col->flags & 11) ? 'time' : $tipo;
+	    $tipo = ($col->flags & 252 || $col->flags & 253 || $col->flags & 254) ? 'string' : $tipo;
+            $cols[$nom] = array('tabla'=>$col->table,'null'=>$null,'num'=>$num,'blob'=>$blob,'tipo'=>$tipo,'pri'=>false,'ai'=>false,'codif'=>false,'com'=>false,'max'=>0);
             if (count($bt) === 2) {
                 $resp = $this->consulta("show full columns from `$bt[0]`.`$bt[1]` like '$nom'");
-                $resp = mysql_fetch_assoc($resp);
+                $resp = $resp->fetch_assoc();
                 $cols[$nom]['codif'] = $resp['Collation'];
                 $cols[$nom]['pri']   = ($resp['Key']==='PRI') ? true : false;
                 $cols[$nom]['ai']    = ($resp['Extra']==='auto_increment') ? true : false;
@@ -145,8 +148,8 @@
                     $cols[$nom]['max'] = $max;
                 }
                 $resp = $this->consulta("SELECT CONCAT(REFERENCED_TABLE_SCHEMA,'.',referenced_table_name,'::',referenced_column_name) AS foranea FROM information_schema.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_SCHEMA = '$bt[0]' AND table_name = '$bt[1]' AND column_name = '$nom' AND REFERENCED_TABLE_NAME is not null");
-                if (mysql_num_rows($resp) === 1) {
-                    $resp = mysql_fetch_assoc($resp);
+                if ($resp->num_rows === 1) {
+                    $resp = $resp->fetch_assoc();
                     $cols[$nom]['referencia'] = $resp['foranea'];
                 }
             }
@@ -160,11 +163,12 @@
             $s = (count($bt) === 2) ? "select * from `$bt[0]`.`$bt[1]`" : "select * from `$bt[0]`";
         }
         if (is_array($q) && count($q) > 0) {
-            $sq = '';
+            $sq   = '';
+	    $meta = $this->meta($s);
             foreach ($q as $k => $v) {
-                if (array_key_exists($k, $this->meta($s))) {
-                    $k  = mysql_real_escape_string($k, self::$conn);
-                    $v  = mysql_real_escape_string($v, self::$conn);
+                if (array_key_exists($k, $meta)) {
+                    $k  = self::$conn->real_escape_string($k);
+                    $v  = self::$conn->real_escape_string($v);
                     $sq .= ($sq) ? " and `$k` like '%$v%'" : " where `$k` like '%$v%' ";
                 }
             }
@@ -174,10 +178,10 @@
         }
         $res = $this->consulta($s);
         $regs = array();
-        while ($reg = mysql_fetch_row($res)) {
+        while ($reg = $res->fetch_row()) {
             $regs[] = $reg;
         }
-        mysql_free_result($res);
+        $res->free();
         return $regs;
     }
     /**
@@ -201,8 +205,8 @@
     function modificar($datos, $s) {
     	$tb = $this->base_tabla($s);
     	if ($tb[0] && $tb[1]) {
-    		$base  = $tb[0];
-    		$tabla = $tb[1];
+    	    $base  = $tb[0];
+    	    $tabla = $tb[1];
             $cual  = array_keys($datos);
             $cual  = $cual[0];
             $datos = $datos[$cual];
@@ -228,8 +232,8 @@
     function eliminar($datos, $s) {
     	$tb = $this->base_tabla($s);
         if ($tb[0] && $tb[1]) {
-        	$base  = $tb[0];
-        	$tabla = $tb[1];
+            $base  = $tb[0];
+            $tabla = $tb[1];
             $datos = is_array($datos) ? "'".implode("','", $datos)."'" : $datos;
             if (strpos($datos, 'where ') === false) {
                 $meta = $this->meta($base.'.'.$tabla);
