@@ -9,12 +9,12 @@ class HTML {
 	private function __construct() {
 	}
 	// Obtiene una cadena mejorada para mostrar en los títulos de columna
-	private function mejorar($cad) {
+	private static function mejorar($cad) {
 		$cad = preg_replace('/([a-z])([A-Z])/', '$1 $2', $cad);
 		return utf8_encode(ucwords(strtolower(str_replace('_',' ',utf8_decode($cad)))));
 	}
 	// Obtiene una cadena a partir de un arreglo al estilo de propiedades HTML
-	private function array2props($prop) {
+	private static function array2props($prop) {
 		$ret = '';
 		if (is_array($prop) && count($prop) > 0) {
 			foreach ($prop as $k => $v) {
@@ -26,7 +26,7 @@ class HTML {
 		return $ret;
 	}
 	// Obtiene una etiqueta con las propiedades correspondientes procesadas
-	private function etiq_props($liga, $etiq, $props, $procesar=true, $agregar=false) {
+	private static function etiq_props($liga, $etiq, $props, $procesar=true, $agregar=false) {
 		$ret = $etiq;
 		if (is_array($props) && count($props) > 0) {
 			if (array_key_exists($etiq, $props)) {
@@ -39,7 +39,7 @@ class HTML {
 		return "<$ret>";
 	}
 	// Obtiene el código necesario para aplicar propiedades condicionadas
-	private function prop_cond($col, $props) {
+	private static function prop_cond($col, $props) {
 		if (!is_array($props)) return '';
 		$ret = '';
 		foreach ($props as $k => $v) {
@@ -83,11 +83,11 @@ class HTML {
 		return $cols;
 	}
 	// Obtiene una cadena procesada con vars y ejec con el índice y objeto LIGA
-	private function procesar($liga, $cad, $ind=0, $error=true) {
+	private static function procesar($liga, $cad, $ind=0, $error=true) {
 		return $liga->ejec($liga->vars($ind, $cad), false, $error);
 	}
 	// Genera una tabla HTML a partir del objeto LIGA y los parámetros indicados
-	function tabla($liga, $caption=false, $cols=false, $props=false, $joins=false, $pie=false) {
+	static function tabla($liga, $caption=false, $cols=false, $props=false, $joins=false, $pie=false) {
 		echo self::etiq_props($liga, 'table', $props);
 		if ($caption && is_string($caption) && !empty($caption)) {
 			echo self::etiq_props($liga, 'caption', $props);
@@ -154,11 +154,11 @@ class HTML {
 		$liga->actualizar();
 	}
 	// Show a HTML table from a LIGA object and parameters
-	function table($liga, $caption=false, $cols=false, $props=false, $joins=false, $foot=false) {
+	static function table($liga, $caption=false, $cols=false, $props=false, $joins=false, $foot=false) {
 		self::tabla($liga, $caption, $cols, $props, $joins, $foot);
 	}
 	// Genera un formulario HTML a partir de la tabla o consulta vinculada
-	function forma($liga, $legend=false, $cols=false, $props=false, $completo=true, $vals=false) {
+	static function forma($liga, $legend=false, $cols=false, $props=false, $completo=true, $vals=false) {
 		if ($liga->numCol() > 0 || $cols) {
 			echo $completo ? self::etiq_props($liga, 'form', $props).self::etiq_props($liga, 'fieldset', $props) : '';
 			if ($legend && is_string($legend) && !empty($legend)) {
@@ -224,11 +224,11 @@ class HTML {
 		}
 	}
 	// Show a HTML form from a LIGA object and parameters
-	function form($liga, $legend=false, $cols=false, $props=false, $complete=true, $values=false) {
+	static function form($liga, $legend=false, $cols=false, $props=false, $complete=true, $values=false) {
 		self::forma($liga, $legend, $cols, $props, $complete, $values);
 	}
 	// Genera un selector (select) HTML a partir de la tabla o consulta vinculada
-	function selector($liga, $cols='1', $props=false, $optgroup=false, $completo=true, $car=0) {
+	static function selector($liga, $cols='1', $props=false, $optgroup=false, $completo=true, $car=0) {
 		ob_start();
 		echo ($completo) ? self::etiq_props($liga, 'select', $props) : '';
 		if ($liga->numCol() > 0 && $liga->numReg() > 0) {
@@ -267,11 +267,11 @@ class HTML {
 		return ob_get_clean();
 	}
 	// Show a HTML select (combobox) from a LIGA object and parameters
-	function select($liga, $cols='1', $props=false, $optgroup=false, $complete=true, $car=0) {
+	static function select($liga, $cols='1', $props=false, $optgroup=false, $complete=true, $car=0) {
 		self::selector($liga, $cols, $props, $optgroup, $complete, $car);
 	}
 	// Genera una lista (ol o ul) HTML a partir del objeto LIGA indicado
-	function lista($liga, $cols='1', $numeros=false, $props=false, $completa=true) {
+	static function lista($liga, $cols='1', $numeros=false, $props=false, $completa=true) {
 		$tipo = ($numeros) ? 'ol' : 'ul';
 		echo ($completa) ? self::etiq_props($liga, $tipo, $props) : '';
 		if ($liga->numCol() > 0 && $liga->numReg() > 0) {
@@ -282,36 +282,34 @@ class HTML {
 		echo ($completa) ? "</$tipo>" : '';
 	}
 	// Show a OL HTML list from a LIGA object and parameters
-	function ol($liga, $cols='1', $props=false, $complete=true) {
+	static function ol($liga, $cols='1', $props=false, $complete=true) {
 		self::lista($liga, $cols, true, $props, $complete);
 	}
 	// Show a UL HTML list from a LIGA object and parameters
-	function ul($liga, $cols='1', $props=false, $complete=true) {
+	static function ul($liga, $cols='1', $props=false, $complete=true) {
 		self::lista($liga, $cols, false, $props, $complete);
 	}
 	// Genera estructuras tipo botones radio o checkbox a partir de un arreglo u objeto LIGA
-	private function opciones($tipo, $obj, $nombre, $props=false, $derecha=false) {
-		if (is_array($obj) && count($obj)) {
-			foreach ($obj as $k => $v) {
-				$etiq  = self::etiq_props($obj, 'input', $props, false, "type='$tipo' name='$nombre' value='$k'");
-				$label = self::etiq_props($obj, 'label', $props, false);
-				echo ($derecha) ? "$label$etiq</input> $v</label> " : "$label$v $etiq</input></label> ";
-			}
-		} elseif (get_class($obj) == 'LIGA' && $obj->numCol() > 1) {
+	private static function opciones($tipo, $obj, $nombre, $props=false, $derecha=false) {
+		if (get_class($obj) == 'LIGA' && $obj->numCol() > 1) {
 			$etiq  = self::etiq_props($obj, 'input', $props, false, "type='$tipo' name='$nombre' value='@[0]'");
 			$label = self::etiq_props($obj, 'label', $props, false);
 			$opcion  = ($derecha) ? "$label$etiq</input>@[1]</label> " : "$label@[1]$etiq</input></label> ";
 			$obj->registros($opcion);
+		} elseif (is_array($obj) && count($obj)) {
+			foreach ($obj as $k => $v) {
+				echo ($derecha) ? "<label><input type='$tipo' name='$nombre' value='$k'>$v</label> " : "<label>$v<input type='$tipo' name='$nombre' value='$k'></label> ";
+			}
 		}
 	}
 	// Genera un grupo de botones radio a partir del arreglo u objeto LIGA dado
-	function radio($obj, $nombre, $props=false, $derecha=false) {
+	static function radio($obj, $nombre, $props=false, $derecha=false) {
 		ob_start();
 		self::opciones('radio', $obj, $nombre, $props, $derecha);
 		return ob_get_clean();
 	}
 	// Genera un grupo de botones checkbox a partir del arreglo u objeto LIGA dado
-	function checkbox($obj, $nombre, $props=false, $derecha=false) {
+	static function checkbox($obj, $nombre, $props=false, $derecha=false) {
 		ob_start();
 		self::opciones('checkbox', $obj, $nombre, $props, $derecha);
 		return ob_get_clean();
