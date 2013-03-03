@@ -1,7 +1,7 @@
 <?php
  require_once 'LIGA.php';
- // Personaliza una conexión a la base de datos
- new BD('localhost', 'root', 'cuci12', 'base');
+ // Personalizo una conexión a la base de datos
+ BD('localhost', 'root', 'cuci12', 'base');
  
  $tabla = 'puestos';
  $liga  = LIGA($tabla);

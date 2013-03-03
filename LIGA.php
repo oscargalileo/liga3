@@ -10,6 +10,10 @@
  function LIGA($s, $q='', $l='') {
     return new LIGA($s, $q, $l);
  }
+ // Personaliza una conexión a la base de datos sin new
+ function BD($s='127.0.0.1', $u='root', $p='', $b='') {
+    return new BD($s, $u, $p, $b);
+ }
  
  class LIGA {
     private $s, $q, $l;
