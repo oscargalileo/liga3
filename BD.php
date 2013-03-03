@@ -1,6 +1,6 @@
 <?php
  /**
-  * Manejador de MySQL
+  * Manejador de MySQLi o MariaDB
   * Para LIGA 3.x
   * Autor: Oscar Galileo García García
   */

@@ -10,8 +10,6 @@
  function LIGA($s, $q='', $l='') {
     return new LIGA($s, $q, $l);
  }
- // Personaliza una conexión a la base de datos
- new BD('localhost', 'root', 'cuci12');
  
  class LIGA {
     private $s, $q, $l;
@@ -73,7 +71,7 @@
     // Obtiene true si la columna existe sino false
     function existe($col) {
         $col = trim($this->num2col($col));
-        return (is_string($col) && array_key_exists($col,$this->meta()));
+        return (is_string($col) && array_key_exists($col, $this->meta()));
     }
     // Obtiene el valor de la propiedad para la columna dada o null si no existe
     function prop($col, $prop) {
@@ -164,7 +162,7 @@
             $cont = substr($cad, $i, $f-$i+1);
             $pars = explode(',', substr($cad, $i+2, $f-$i-2), 2);
             $res = (isset($pars[1])) ? $this->prop($pars[0], $pars[1]) : $this->dato($ind, $pars[0]);
-            $res = htmlentities($res, ENT_QUOTES, 'UTF-8');
+            $res = htmlentities($res, ENT_NOQUOTES, 'UTF-8');
             if (!$this->existe($pars[0])) {
                 $pars = trim($pars[0]);
                 if ($pars === 'numReg') {
@@ -193,7 +191,7 @@
             $ret  = @eval($cod.';');
             $res  = ob_get_clean();
             $res .= $ret;
-            $res  = htmlentities($res, ENT_QUOTES, 'UTF-8');
+            $res  = htmlentities($res, ENT_NOQUOTES, 'UTF-8');
             $res  = ($error && empty($res) && empty($ret)) ? "`[LIGA]: Error en el código '$cod'´" : $res;
             $res  = ($comillas) ? "'$res'" : $res;
             $cad  = str_replace($cont, $res, $cad);
@@ -246,7 +244,7 @@
             $llaves = array_keys($datos);
             $llave = $llaves[0];
             $datos = $datos[$llave];
-            $dats = array();
+            $dats  = array();
             foreach ($datos as $k => $v) {
                 if ($this->existe($k) && trim($v) !== '') {
                     $dats[$k] = $v;

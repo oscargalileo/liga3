@@ -18,6 +18,7 @@ class HTML {
 		$ret = '';
 		if (is_array($prop) && count($prop) > 0) {
 			foreach ($prop as $k => $v) {
+				$v = htmlentities($v, ENT_QUOTES, 'UTF-8');
 				$ret .= " $k=\"$v\"";
 			}
 		} else {
@@ -45,7 +46,7 @@ class HTML {
 		foreach ($props as $k => $v) {
 			if (strpos($k, "$col@si(") !== false) {
 				$cond = substr($k, strpos($k, '('));
-				$v = str_replace('"', "'", self::array2props($v));
+				$v = str_replace('"', '\"', self::array2props($v));
 				$ret .= '@{if '.$cond.' return "'.$v.'"}@';
 			}
 		}
@@ -138,7 +139,8 @@ class HTML {
 		echo "<tr>$ths</tr></thead>";
 		if ($pie && is_string($pie) && !empty($pie)) {
 			echo self::etiq_props($liga, 'tfoot', $props);
-			$pie = self::procesar($liga ,$pie);
+			$pie = str_replace('@[numCols]', count($cols), $pie);
+			$pie = self::procesar($liga, $pie);
 			echo (strpos($pie, '<tr') === false) ? "<tr>$pie</tr>" : $pie;
 			echo '</tfoot>';
 		}
@@ -170,7 +172,7 @@ class HTML {
 			$cols = self::todos($liga, $cols);
 			if (count($cols) > 0) {
 				foreach ($cols as $k => $v) {
-					$col = is_string($k) ? $k : $v;
+					$col = is_string($k) ? trim($k) : trim($v);
 					if (!$liga->prop($col, 'ai')) {
 						echo self::etiq_props($liga, 'div', $props);
 						$label = (is_string($k) && is_string($v) && $v != '' && strpos($v, '<') === false) ? self::procesar($liga, $v) : self::mejorar($col);
@@ -242,7 +244,7 @@ class HTML {
 				$grupos = array_values($optgroup);
 				$grupos = current($grupos);
 				if (get_class($grupos) == 'LIGA') {
-					$grupos = $liga->arreglo($grupos);
+					$grupos = $grupos->arreglo();
 				}
 				foreach ($grupos as $k => $v) {
 					$v = htmlentities($v, ENT_QUOTES, 'UTF-8');
