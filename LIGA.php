@@ -89,6 +89,10 @@
         }
         return null;
     }
+    // Alias de prop
+    function p($col, $prop) {
+      return $this->prop($col, $prop);
+    }
     // Obtiene el número de registros en la tabla o consulta vinculada
     function numReg() {
         return count($this->info());
@@ -113,6 +117,10 @@
     function dato($ind, $col) {
         $fila = (is_numeric($col)) ? $this->fila($ind, false) : $this->fila($ind);
         return (isset($fila[trim($col)])) ? $fila[trim($col)] : null;
+    }
+    // Alias de dato, se puede omitir el índice si este es cero
+    function d($ind, $col) {
+      return is_int($ind) ? $this->dato($ind, $col) : $this->dato(0, $ind);
     }
     // Obtiene todas las filas (arreglos simples o asociativos) de la tabla o consulta
     function filas($cols=true) {
