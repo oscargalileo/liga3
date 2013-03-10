@@ -27,7 +27,7 @@
         self::$conn->query("SET NAMES 'utf8'");
         $resp = self::$conn->query($sql);
         if(self::$conn->error) {
-            throw new Exception('[LIGA] Error de SQL: '.self::$conn->error." con [$sql]");
+	    return '[LIGA] Error de SQL: '.self::$conn->error." con [$sql]";
         }
         if (strpos(strtolower($sql), 'select ') !== false || strpos(strtolower($sql), 'show ') !== false) {
             return $resp;
@@ -51,7 +51,7 @@
         self::$conn->query("SET NAMES 'utf8'");
         $resp = self::$conn->query($sql);
         if(self::$conn->error) {
-            throw new Exception('[LIGA] Error de SQL: '.self::$conn->error." con [$sql]");
+	    return '[LIGA] Error de SQL: '.self::$conn->error." con [$sql]";
         }
         if (strpos(strtolower($sql), 'select ') !== false || strpos(strtolower($sql), 'show ') !== false) {
             return $resp;
