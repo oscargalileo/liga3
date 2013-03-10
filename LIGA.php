@@ -145,7 +145,7 @@
     function columna($col) {
         $datos = array();
         while ($this->filas()) {
-            if (($d = $this->dato($this->idx-1, $col))) {
+            if (($d = $this->d($this->idx-1, $col))) {
                 $datos[] = $d;
             }
         }
@@ -173,7 +173,7 @@
             $f = $pos2;
             $cont = substr($cad, $i, $f-$i+1);
             $pars = explode(',', substr($cad, $i+2, $f-$i-2), 2);
-            $res = (isset($pars[1])) ? $this->prop($pars[0], $pars[1]) : $this->dato($ind, $pars[0]);
+            $res = (isset($pars[1])) ? $this->p($pars[0], $pars[1]) : $this->d($ind, $pars[0]);
             $res = htmlentities($res, ENT_NOQUOTES, 'UTF-8');
             if (!$this->existe($pars[0])) {
                 $pars = trim($pars[0]);

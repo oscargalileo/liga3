@@ -101,7 +101,7 @@ class HTML {
 					$v = (get_class($v) == 'LIGA') ? $v->arreglo() : $v;
 					if (is_array($v) && count($v) > 0) {
 						$con = 0;
-						while (($dato = $liga->dato($con, $k)) !== null) {
+						while (($dato = $liga->d($con, $k)) !== null) {
 							(isset($v[$dato])) ? $liga->cambiar($con, $k, $v[$dato]) : '';
 							$con++;
 						}
@@ -173,7 +173,7 @@ class HTML {
 			if (count($cols) > 0) {
 				foreach ($cols as $k => $v) {
 					$col = is_string($k) ? trim($k) : trim($v);
-					if (!$liga->prop($col, 'ai')) {
+					if (!$liga->p($col, 'ai')) {
 						echo self::etiq_props($liga, 'div', $props);
 						$label = (is_string($k) && is_string($v) && $v != '' && strpos($v, '<') === false) ? self::procesar($liga, $v) : self::mejorar($col);
 						$pref = (isset($props['prefid'])) ? self::procesar($liga, $props['prefid']) : '';
@@ -182,7 +182,7 @@ class HTML {
 							$prop .= self::prop_cond("label[$col]", $props);
 							$prop .= (isset($props['label'])) ? htmlentities(self::procesar($liga, self::array2props($props['label'])),ENT_NOQUOTES,'UTF-8') : '';
 							$prop .= self::prop_cond('label', $props);
-							$req = ($liga->prop($col, 'nulo') === false) ? ' *' : '';
+							$req = ($liga->p($col, 'nulo') === false) ? ' *' : '';
 							$label = "<label for=\"$pref$col\"$prop>$label$req</label> ";
 						}
 						echo $label;
@@ -193,21 +193,21 @@ class HTML {
 							$prop .= self::prop_cond("input[$col]", $props);
 							$prop .= (isset($props['input'])) ? htmlentities(self::procesar($liga, self::array2props($props['input'])),ENT_NOQUOTES,'UTF-8') : '';
 							$prop .= self::prop_cond('input', $props);
-							$max = $liga->prop($col, 'max') ? ' maxlength="'.$liga->prop($col, 'max').'"' : '';
-							$com = $liga->prop($col, 'com') ? ' title="'.$liga->prop($col, 'com').'"' : '';
-							if (($ref = $liga->prop($col, 'referencia'))) {
+							$max = $liga->p($col, 'max') ? ' maxlength="'.$liga->p($col, 'max').'"' : '';
+							$com = $liga->p($col, 'com') ? ' title="'.$liga->p($col, 'com').'"' : '';
+							if (($ref = $liga->p($col, 'referencia'))) {
 								$objRef = LIGA(substr($ref, 0, strpos($ref, '::')));
 								$colRef = substr($ref, strpos($ref, '::')+2);
 								$value = (isset($vals[$col])) ? self::procesar($liga, $vals[$col]) : '';
 								$propRef = array('select'=>"id='$pref$col' name='$col'$com$prop", 'option'=>"value='@[$colRef]'", 'option@si("@['.$colRef.']"=="'.$value.'")'=>'selected="selected"');
 								echo self::selector($objRef, '1', $propRef);
-							} elseif ($liga->prop($col, 'blob')) {
+							} elseif ($liga->p($col, 'blob')) {
 								$value = (isset($vals[$col])) ? self::procesar($liga, $vals[$col]) : '';
 								echo "<textarea id='$pref$col' name='$col'$max$com$prop>$value</textarea>";
 							} else {
 								$value = (isset($vals[$col])) ? ' value="'.self::procesar($liga, $vals[$col]).'"' : '';
-								$fecha = strpos($liga->prop($col, 'tipo'), 'date') === false ? '' : ' class="fecha"';
-								$fecha = strpos($liga->prop($col, 'tipo'), 'stamp') === false ? $fecha : ' class="fecha"';
+								$fecha = strpos($liga->p($col, 'tipo'), 'date') === false ? '' : ' class="fecha"';
+								$fecha = strpos($liga->p($col, 'tipo'), 'stamp') === false ? $fecha : ' class="fecha"';
 								echo "<input id='$pref$col' name='$col'$max$com$fecha$prop$value />";
 							}
 						} else {
