@@ -169,7 +169,9 @@
                 if (array_key_exists($k, $meta)) {
                     $k  = self::$conn->real_escape_string($k);
                     $v  = self::$conn->real_escape_string($v);
-                    $sq .= ($sq) ? " and `$k` like '%$v%'" : " where `$k` like '%$v%' ";
+		    if ($meta[$k]['pri'])
+		     $sq .= ($sq) ? " and `$k` = '$v'" : " where `$k` = '$v' ";
+		    else $sq .= ($sq) ? " and `$k` like '%$v%'" : " where `$k` like '%$v%' ";
                 }
             }
             $s .= $sq.$l;
