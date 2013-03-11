@@ -119,6 +119,14 @@ class HTML {
 			<p class="chromeframe">Está usando un navegador <strong>desactualizado</strong>. Favor de <a href="http://browsehappy.com/">actualizarlo</a> o <a href="http://www.google.com/chromeframe/?redirect=true">active Google Chrome Frame</a> para mejorar su experiencia.</p>
 		    <![endif]-->';
 	}
+	// Genera el cuerpo del documento a partir del array asociativo
+	static function cuerpo($config) {
+		foreach ($config as $id => $cont) {
+			echo "<div id=\"$id\">";
+			echo is_string($cont) ? $cont : self::cuerpo($cont);
+			echo '</div>';
+		}
+	}
 	// Genera los etiquetas de cierre del HTML5 (http://html5boilerplate.com)
 	static function pie($config = array()) {
 		if (!empty($config['js']))

@@ -22,7 +22,7 @@
  if (isset($_GET['borrar'])) {
   $resp = $liga->eliminar($_GET['borrar']);
  }
-
+ 
  // Si es una petición asíncrona sólo muestro la respuesta
  if (isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
   echo $resp;
@@ -32,10 +32,12 @@
   HTML::cabeceras(array('title'      =>'Pruebas LIGA 3',
 			'description'=>'Página de pruebas para LIGA 3',
 			'css'        =>array('LIGA.css'),
-			'style'      =>'label {
-			  width:100px;
-			 }'));
-
+			'style'      =>'label { width:100px; }'
+			)
+		  );
+ 
+ // Guardo el bufer para colocarlo en el layout
+ ob_start();
    // Tabla con instancias
     $cols = array('*', '-contraseña', 'acción'=>'<a href="?borrar=@[0]">Borrar</a>');
     $join = array('depende'=>$liga);
@@ -58,6 +60,10 @@
 			     );
     $campos = array('cual'=>$select, '*', '-fecha');
     HTML::forma($liga, 'Modificar '.$tabla, $campos, $props, true);
+ $cont = ob_get_clean();
+ 
+  // Cuerpo con layout
+  HTML::cuerpo(array('cont'=>$cont));
 
   // Cierre de etiquetas HTML5
   HTML::pie();
