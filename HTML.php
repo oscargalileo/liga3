@@ -87,6 +87,52 @@ class HTML {
 	private static function procesar($liga, $cad, $ind=0, $error=true) {
 		return $liga->ejec($liga->vars($ind, $cad), false, $error);
 	}
+	// Genera los encabezado HTML5 de la página (http://html5boilerplate.com)
+	static function cabeceras($config) {
+		echo '<!DOCTYPE html>
+		<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+		<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+		<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+		<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+		<head>
+		    <meta charset="utf-8">
+		    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		    <title>'.$config['title'].'</title>
+		    <meta name="description" content="'.$config['description'].'">
+		    <meta name="viewport" content="width=device-width">';
+		if (!empty($config['meta']))
+		foreach ($config['meta'] as $name => $content) {
+			echo "<meta name=\"$name\" content=\"$content\">";
+		}
+		if (!empty($config['css']))
+		foreach ($config['css'] as $i => $css) {
+			echo "<link rel=\"stylesheet\" href=\"$css\">";
+		}
+		if (!empty($config['js']))
+		foreach ($config['js'] as $i => $js) {
+			echo "<script src=\"$js\"></script>";
+		}
+		echo !empty($config['style']) ? "<style>$config[style]</style>" : '';
+		echo '</head>
+		<body>
+		    <!--[if lt IE 7]>
+			<p class="chromeframe">Está usando un navegador <strong>desactualizado</strong>. Favor de <a href="http://browsehappy.com/">actualizarlo</a> o <a href="http://www.google.com/chromeframe/?redirect=true">active Google Chrome Frame</a> para mejorar su experiencia.</p>
+		    <![endif]-->';
+	}
+	// Genera los etiquetas de cierre del HTML5 (http://html5boilerplate.com)
+	static function pie($config = array()) {
+		if (!empty($config['js']))
+		foreach ($config['js'] as $i => $js) {
+			echo "<script src=\"$js\"></script>";
+		}
+		echo !empty($config['UA']) ? "<script>var _gaq=[['_setAccount','$config[UA]'],['_trackPageview']];
+			(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+			g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+			s.parentNode.insertBefore(g,s)}(document,'script'));
+		</script>
+		</body>
+		</html>" : '';
+	}
 	// Genera una tabla HTML a partir del objeto LIGA y los parámetros indicados
 	static function tabla($liga, $caption=false, $cols=false, $props=false, $joins=false, $pie=false) {
 		echo self::etiq_props($liga, 'table', $props);
