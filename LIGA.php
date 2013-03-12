@@ -173,6 +173,7 @@
             $f = $pos2;
             $cont = substr($cad, $i, $f-$i+1);
             $pars = explode(',', substr($cad, $i+2, $f-$i-2), 2);
+            $pars[0] = html_entity_decode($pars[0], ENT_QUOTES, 'UTF-8');
             $res = (isset($pars[1])) ? $this->p($pars[0], $pars[1]) : $this->d($ind, $pars[0]);
             $res = htmlentities($res, ENT_NOQUOTES, 'UTF-8');
             if (!$this->existe($pars[0])) {
@@ -192,7 +193,7 @@
         return $cad;
     }
     // Obtiene la cadena después de ejecutar con eval lo que está entre @{ }@
-    function ejec($cad, $comillas=false, $error=true) {
+    function ejec($cad, $comillas=false) {
         if (($pos1 = strpos($cad, '@{')) !== false && ($pos2 = strpos($cad, '}@', $pos1+2)) !== false) {
             $i = $pos1;
             $f = $pos2;
@@ -204,7 +205,6 @@
             $res  = ob_get_clean();
             $res .= $ret;
             $res  = htmlentities($res, ENT_NOQUOTES, 'UTF-8');
-            $res  = ($error && empty($res) && empty($ret)) ? "`[LIGA]: Error en el código '$cod'´" : $res;
             $res  = ($comillas) ? "'$res'" : $res;
             $cad  = str_replace($cont, $res, $cad);
             $cad  = $this->ejec($cad, $comillas);
@@ -221,11 +221,11 @@
         return false;
     }
     // Muestra en pantalla todos los registros a partir del formato indicado en $cad
-    function registros($cad, $error=true) {
+    function registros($cad) {
         if (is_string($cad) && !empty($cad) && strpos($cad, '@[') !== false && $this->numReg() && $this->numCol()) {
             $info = $this->info();
             foreach($info as $k => $v) {
-                echo $this->ejec($this->vars($k, $cad), false, $error);
+                echo $this->ejec($this->vars($k, $cad));
             }
             return true;
         }
