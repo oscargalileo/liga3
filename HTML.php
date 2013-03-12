@@ -47,7 +47,7 @@ class HTML {
 			if (strpos($k, "$col@si(") !== false) {
 				$cond = substr($k, strpos($k, '('));
 				$v = str_replace('"', '\"', self::array2props($v));
-				$ret .= '@{if '.$cond.' return "'.$v.'"}@';
+				$ret .= '@{if '.$cond.' echo "'.$v.'"}@';
 			}
 		}
 		return $ret;
@@ -65,7 +65,7 @@ class HTML {
 					$otro = false;
 					continue;
 				} elseif (strpos($v, '-') === 0) {
-					$idx = array_search(substr($v, 1), $todas);
+					$idx = array_search($liga->num2col(substr($v, 1)), $todas);
 					if ($idx !== false)
 						unset($todas[$idx]);
 				}
@@ -84,15 +84,15 @@ class HTML {
 		return $cols;
 	}
 	// Obtiene una cadena procesada con vars y ejec con el índice y objeto LIGA
-	private static function procesar($liga, $cad, $ind=0, $error=true) {
-		return $liga->ejec($liga->vars($ind, $cad), false, $error);
+	private static function procesar($liga, $cad, $ind=0, $comillas=false) {
+		return $liga->ejec($liga->vars($ind, $cad, $comillas));
 	}
 	// Genera los encabezado HTML5 de la página (http://html5boilerplate.com)
 	static function cabeceras($config) {
 		echo '<!DOCTYPE html>
-		<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-		<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-		<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+		<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+		<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+		<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
 		<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 		<head>
 		    <meta charset="utf-8">
@@ -173,16 +173,23 @@ class HTML {
 		if (is_array($cols) && count($cols) > 0) {
 			foreach($cols as $k => $v) {
 				$col  = is_string($k) ? $k : $v;
+				$num  = $liga->col2num($col);
 				$prop = (isset($props["th[$col]"])) ? htmlentities(self::procesar($liga, self::array2props($props["th[$col]"])), ENT_NOQUOTES, 'UTF-8') : '';
+				$prop = (isset($props["th[$num]"])) ? htmlentities(self::procesar($liga, self::array2props($props["th[$num]"])), ENT_NOQUOTES, 'UTF-8') : '';
 				$prop .= (isset($props['th'])) ? htmlentities(self::procesar($liga, self::array2props($props['th'])), ENT_NOQUOTES, 'UTF-8') : '';
 				$prop .= self::prop_cond("th[$col]", $props);
+				$prop .= self::prop_cond("th[$num]", $props);
 				$prop .= self::prop_cond('th', $props);
-				$ths  .= "<th$prop>".self::mejorar($liga->num2col($col)).'</th>';
+				$ths  .= is_string($k) ? "<th$prop>".$liga->num2col($col).'</th>' : "<th$prop>".self::mejorar($liga->num2col($col)).'</th>';
 				$prop = (isset($props["td[$col]"])) ? self::array2props($props["td[$col]"]) : '';
+				$prop = (isset($props["td[$num]"])) ? self::array2props($props["td[$num]"]) : '';
 				$prop .= (isset($props[$col])) ? self::array2props($props[$col]) : '';
+				$prop .= (isset($props[$num])) ? self::array2props($props[$num]) : '';
 				$prop .= (isset($props['td'])) ? self::array2props($props['td']) : '';
 				$prop .= self::prop_cond("td[$col]", $props);
 				$prop .= self::prop_cond($col, $props);
+				$prop .= self::prop_cond("td[$num]", $props);
+				$prop .= self::prop_cond($num, $props);
 				$prop .= self::prop_cond('td', $props);
 				$tds  .= (is_string($k) && is_string($v) && $v != '') ? "<td$prop>$v</td>" : "<td$prop>@[$col]</td>";
 			}
