@@ -152,7 +152,7 @@ class HTML {
 		if ($joins && is_array($joins) && count($joins) > 0) {
 			foreach ($joins as $k => $v) {
 				if ($liga->existe($k)) {
-					$v = (get_class($v) == 'LIGA') ? $v->arreglo() : $v;
+					$v = (is_array($v)) ? $v : $v->arreglo();
 					if (is_array($v) && count($v) > 0) {
 						$con = 0;
 						while (($dato = $liga->d($con, $k)) !== null) {

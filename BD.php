@@ -13,6 +13,7 @@
             if(!self::$conn = new mysqli($s,$u,$p)) {
                 throw new Exception("[LIGA] Error de SQL al intentar conectar con $s $u $p");
             }
+	    self::$conn->query("SET NAMES 'utf8'");
         }
         if (!empty($b)) {
             $this->base = (self::$conn->select_db($b)) ? $b : null;
@@ -48,7 +49,6 @@
     }
     // Obtiene el resultado a partir de la consulta SQL dada o la cantidad de filas afectadas
     function consulta($sql) {
-        self::$conn->query("SET NAMES 'utf8'");
         $resp = self::$conn->query($sql);
         if(self::$conn->error) {
 	    return '[LIGA] Error de SQL: '.self::$conn->error." con [$sql]";
@@ -91,7 +91,7 @@
                 }
             }
         } else {
-        	$ar = preg_split('/[ .]/', $s, 3);
+            $ar = preg_split('/[. ]/', $s, 3);
             $cad1 = $ar[0];
             if(strpos($s, '.') !== false) {
                 $cad2 = $ar[1];

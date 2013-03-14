@@ -107,7 +107,7 @@
         if (isset($info[$ind])) {
             if ($cols) {
                 $llaves = array_keys($this->meta());
-                return array_combine($llaves, $info[$ind]);
+                return array_combine($llaves, array_slice($info[$ind], 0, count($llaves)));
             }
             return $info[$ind];
         }
