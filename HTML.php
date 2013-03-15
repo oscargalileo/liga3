@@ -251,9 +251,10 @@ class HTML {
 							echo $v;
 						} elseif ($liga->existe($col)) {
 							$prop  = (isset($props["input[$col]"])) ? htmlentities(self::procesar($liga, self::array2props($props["input[$col]"])),ENT_NOQUOTES,'UTF-8') : '';
-							$prop .= self::prop_cond("input[$col]", $props);
+							$prop .= self::procesar($liga, self::prop_cond("input[$col]", $props));
 							$prop .= (isset($props['input'])) ? htmlentities(self::procesar($liga, self::array2props($props['input'])),ENT_NOQUOTES,'UTF-8') : '';
-							$prop .= self::prop_cond('input', $props);
+							$prop .= (isset($props[$col])) ? htmlentities(self::procesar($liga, self::array2props($props[$col])),ENT_NOQUOTES,'UTF-8') : '';
+							$prop .= self::procesar($liga, self::prop_cond('input', $props));
 							$max = $liga->p($col, 'max') ? ' maxlength="'.$liga->p($col, 'max').'"' : '';
 							$com = $liga->p($col, 'com') ? ' title="'.$liga->p($col, 'com').'"' : '';
 							if (($ref = $liga->p($col, 'referencia'))) {
