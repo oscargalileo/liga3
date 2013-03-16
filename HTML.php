@@ -240,9 +240,9 @@ class HTML {
 						$pref = (isset($props['prefid'])) ? self::procesar($liga, $props['prefid']) : '';
 						if (strpos($label, '<label for') === false) {
 							$prop = (isset($props["label[$col]"])) ? htmlentities(self::procesar($liga, self::array2props($props["label[$col]"])),ENT_NOQUOTES,'UTF-8') : '';
-							$prop .= self::prop_cond("label[$col]", $props);
+							$prop .= self::procesar($liga, self::prop_cond("label[$col]", $props));
 							$prop .= (isset($props['label'])) ? htmlentities(self::procesar($liga, self::array2props($props['label'])),ENT_NOQUOTES,'UTF-8') : '';
-							$prop .= self::prop_cond('label', $props);
+							$prop .= self::procesar($liga, self::prop_cond('label', $props));
 							$req = ($liga->p($col, 'nulo') === false) ? ' *' : '';
 							$label = "<label for=\"$pref$col\"$prop>$label$req</label> ";
 						}

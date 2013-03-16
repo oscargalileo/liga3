@@ -64,7 +64,7 @@
  
   // Cuerpo con layout
   HTML::cuerpo(array('cont'=>$cont));
-
+  
   // Cierre de etiquetas HTML5
   HTML::pie();
 ?>
