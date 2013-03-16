@@ -279,8 +279,10 @@ class HTML {
 					}
 				}
 			}
+			echo '<div class="botones" style="clear:both">';
 			echo (isset($props['submit']) && is_string($props['submit'])) ? $props['submit'] : '<input type="submit" value="Enviar" />';
 			echo (isset($props['reset']) && is_string($props['reset'])) ? $props['reset'] : '<input type="reset" value="Limpiar" />';
+			echo '</div>';
 			echo $completo ? '</fieldset></form>' : '';
 		} else {
 			echo '[LIGA] Parámetros incorrectos';
@@ -354,15 +356,15 @@ class HTML {
 	}
 	// Genera estructuras tipo botones radio o checkbox a partir de un arreglo u objeto LIGA
 	private static function opciones($tipo, $obj, $nombre, $props=false, $derecha=false) {
-		if (get_class($obj) == 'LIGA' && $obj->numCol() > 1) {
+		if (is_array($obj) && count($obj)) {
+			foreach ($obj as $k => $v) {
+				echo ($derecha) ? "<label><input type='$tipo' name='$nombre' value='$k'>$v</label> " : "<label>$v<input type='$tipo' name='$nombre' value='$k'></label> ";
+			}
+		} elseif (get_class($obj) == 'LIGA' && $obj->numCol() > 1) {
 			$etiq  = self::etiq_props($obj, 'input', $props, false, "type='$tipo' name='$nombre' value='@[0]'");
 			$label = self::etiq_props($obj, 'label', $props, false);
 			$opcion  = ($derecha) ? "$label$etiq</input>@[1]</label> " : "$label@[1]$etiq</input></label> ";
 			$obj->registros($opcion);
-		} elseif (is_array($obj) && count($obj)) {
-			foreach ($obj as $k => $v) {
-				echo ($derecha) ? "<label><input type='$tipo' name='$nombre' value='$k'>$v</label> " : "<label>$v<input type='$tipo' name='$nombre' value='$k'></label> ";
-			}
 		}
 	}
 	// Genera un grupo de botones radio a partir del arreglo u objeto LIGA dado
