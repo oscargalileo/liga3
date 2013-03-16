@@ -99,21 +99,21 @@ class HTML {
 		    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		    <title>'.$config['title'].'</title>
 		    <meta name="description" content="'.$config['description'].'">
-		    <meta name="viewport" content="width=device-width">';
+		    <meta name="viewport" content="width=device-width">'."\n";
 		if (!empty($config['meta']))
 		foreach ($config['meta'] as $name => $content) {
-			echo "<meta name=\"$name\" content=\"$content\">";
+			echo "\t\t    <meta name=\"$name\" content=\"$content\">\n";
 		}
 		if (!empty($config['css']))
 		foreach ($config['css'] as $i => $css) {
-			echo "<link rel=\"stylesheet\" href=\"$css\">";
+			echo "\t\t    <link rel=\"stylesheet\" href=\"$css\">\n";
 		}
 		if (!empty($config['js']))
 		foreach ($config['js'] as $i => $js) {
-			echo "<script src=\"$js\"></script>";
+			echo "\t\t    <script src=\"$js\"></script>\n";
 		}
-		echo !empty($config['style']) ? "<style>$config[style]</style>" : '';
-		echo '</head>
+		echo !empty($config['style']) ? "\t\t    <style>$config[style]</style>\n" : '';
+		echo "\t\t".'</head>
 		<body>
 		    <!--[if lt IE 7]>
 			<p class="chromeframe">Está usando un navegador <strong>desactualizado</strong>. Favor de <a href="http://browsehappy.com/">actualizarlo</a> o <a href="http://www.google.com/chromeframe/?redirect=true">active Google Chrome Frame</a> para mejorar su experiencia.</p>
@@ -133,13 +133,12 @@ class HTML {
 		foreach ($config['js'] as $i => $js) {
 			echo "<script src=\"$js\"></script>";
 		}
+		echo !empty($config['script']) ? "\t\t    <script>$config[script]</script>\n" : '';
 		echo !empty($config['UA']) ? "<script>var _gaq=[['_setAccount','$config[UA]'],['_trackPageview']];
 			(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
 			g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-			s.parentNode.insertBefore(g,s)}(document,'script'));
-		</script>
-		</body>
-		</html>" : '';
+			s.parentNode.insertBefore(g,s)}(document,'script'));</script>\n" : '';
+		echo "\n\t\t</body>\n\t\t</html>";
 	}
 	// Genera una tabla HTML a partir del objeto LIGA y los parámetros indicados
 	static function tabla($liga, $caption=false, $cols=false, $props=false, $joins=false, $pie=false) {
