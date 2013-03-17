@@ -90,34 +90,36 @@ class HTML {
 	// Genera los encabezado HTML5 de la página (http://html5boilerplate.com)
 	static function cabeceras($config) {
 		echo '<!DOCTYPE html>
-		<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-		<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-		<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
-		<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-		<head>
-		    <meta charset="utf-8">
-		    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		    <title>'.$config['title'].'</title>
-		    <meta name="description" content="'.$config['description'].'">
-		    <meta name="viewport" content="width=device-width">'."\n";
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>'.$config['title'].'</title>
+		<meta name="description" content="'.$config['description'].'">
+		<meta name="viewport" content="width=device-width">'."\n";
 		if (!empty($config['meta']))
 		foreach ($config['meta'] as $name => $content) {
-			echo "\t\t    <meta name=\"$name\" content=\"$content\">\n";
+			echo "\t\t<meta name=\"$name\" content=\"$content\">\n";
 		}
 		if (!empty($config['css']))
 		foreach ($config['css'] as $i => $css) {
-			echo "\t\t    <link rel=\"stylesheet\" href=\"$css\">\n";
+			echo "\t\t<link rel=\"stylesheet\" href=\"$css\">\n";
 		}
 		if (!empty($config['js']))
 		foreach ($config['js'] as $i => $js) {
-			echo "\t\t    <script src=\"$js\"></script>\n";
+			echo "\t\t<script src=\"$js\"></script>\n";
 		}
-		echo !empty($config['style']) ? "\t\t    <style>$config[style]</style>\n" : '';
-		echo "\t\t".'</head>
-		<body>
-		    <!--[if lt IE 7]>
-			<p class="chromeframe">Está usando un navegador <strong>desactualizado</strong>. Favor de <a href="http://browsehappy.com/">actualizarlo</a> o <a href="http://www.google.com/chromeframe/?redirect=true">active Google Chrome Frame</a> para mejorar su experiencia.</p>
-		    <![endif]-->';
+		echo !empty($config['style']) ? "\t\t<style>$config[style]</style>\n" : '';
+		echo !empty($config['script']) ? "\t\t<script>$config[script]</script>\n" : '';
+		echo "\t".'</head>
+	<body>
+		<!--[if lt IE 7]>
+		<p class="chromeframe">Está usando un navegador <strong>desactualizado</strong>. Favor de <a href="http://browsehappy.com/">actualizarlo</a> o <a href="http://www.google.com/chromeframe/?redirect=true">active Google Chrome Frame</a> para mejorar su experiencia.</p>
+		<![endif]-->'."\n";
 	}
 	// Genera el cuerpo del documento a partir del array asociativo
 	static function cuerpo($config) {
@@ -131,14 +133,14 @@ class HTML {
 	static function pie($config = array()) {
 		if (!empty($config['js']))
 		foreach ($config['js'] as $i => $js) {
-			echo "<script src=\"$js\"></script>";
+			echo "\t\t<script src=\"$js\"></script>\n";
 		}
 		echo !empty($config['script']) ? "\t\t    <script>$config[script]</script>\n" : '';
-		echo !empty($config['UA']) ? "<script>var _gaq=[['_setAccount','$config[UA]'],['_trackPageview']];
+		echo !empty($config['UA']) ? "\t\t<script>var _gaq=[['_setAccount','$config[UA]'],['_trackPageview']];
 			(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
 			g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
 			s.parentNode.insertBefore(g,s)}(document,'script'));</script>\n" : '';
-		echo "\n\t\t</body>\n\t\t</html>";
+		echo "\n\t</body>\n</html>";
 	}
 	// Genera una tabla HTML a partir del objeto LIGA y los parámetros indicados
 	static function tabla($liga, $caption=false, $cols=false, $props=false, $joins=false, $pie=false) {
@@ -146,7 +148,7 @@ class HTML {
 		if ($caption && is_string($caption) && !empty($caption)) {
 			echo self::etiq_props($liga, 'caption', $props);
 			echo htmlentities($caption, ENT_NOQUOTES, 'UTF-8');
-			echo '</caption>';
+			echo "</caption>\n";
 		}
 		if ($joins && is_array($joins) && count($joins) > 0) {
 			foreach ($joins as $k => $v) {
@@ -196,7 +198,7 @@ class HTML {
 			$ths = '<th>[LIGA] Error en el parámetro de columnas</th>';
 		}
 		echo self::etiq_props($liga, 'thead', $props);
-		echo "<tr>$ths</tr></thead>";
+		echo "<tr>$ths</tr>\n</thead>\n";
 		if ($pie && is_string($pie) && !empty($pie)) {
 			echo self::etiq_props($liga, 'tfoot', $props);
 			$pie = str_replace('@[numCols]', count($cols), $pie);
@@ -211,8 +213,8 @@ class HTML {
 		} else {
 			echo "<tr><th colspan='".count($cols)."'>Sin registros</th></tr>";
 		}
-		echo '</tbody>';
-		echo '</table>';
+		echo "</tbody>\n";
+		echo "</table>\n";
 		$liga->actualizar();
 	}
 	// Show a HTML table from a LIGA object and parameters
@@ -226,7 +228,7 @@ class HTML {
 			if ($legend && is_string($legend) && !empty($legend)) {
 				echo self::etiq_props($liga, 'legend', $props);
 				echo htmlentities($legend, ENT_NOQUOTES, 'UTF-8');
-				echo '</legend>';
+				echo "</legend>\n";
 			}
 			$cols = (is_array($cols) && count($cols) > 0) ? $cols : ((is_string($cols)) ? explode(',', $cols) : array_keys($liga->meta()));
 			$cols = self::todos($liga, $cols);
@@ -275,15 +277,15 @@ class HTML {
 							$value = (isset($vals[$col])) ? ' value="'.self::procesar($liga, $vals[$col]).'"' : '';
 							echo "<input id='$pref$col' name='$col'$value />";
 						}
-						echo '</div>';
+						echo "</div>\n";
 					}
 				}
 			}
-			echo '<div class="botones" style="clear:both">';
+			echo '<div class="botones" style="clear:both">'."\n";
 			echo (isset($props['submit']) && is_string($props['submit'])) ? $props['submit'] : '<input type="submit" value="Enviar" />';
 			echo (isset($props['reset']) && is_string($props['reset'])) ? $props['reset'] : '<input type="reset" value="Limpiar" />';
-			echo '</div>';
-			echo $completo ? '</fieldset></form>' : '';
+			echo "</div>\n";
+			echo $completo ? "</fieldset>\n</form>\n" : '';
 		} else {
 			echo '[LIGA] Parámetros incorrectos';
 		}
