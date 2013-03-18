@@ -1,20 +1,14 @@
 LIGA3
 ==============
+El proyecto LIGA presenta LIGA.php 3, se trata de una reconstrucción total de la biblioteca retomando lo mejor de las versiones anteriores. Entre sus principales funciones destacan:
 
-El proyecto LIGA presenta LIGA.php 3, es una biblioteca de software libre desarrollada con PHP 5 que mejora la forma de interactuar con la información proveniente de una base de datos.
+ * Usando el template HTML5 Boilerplate permite crear fácilmente la estructura de la página
+ * Ayuda a estructurar el layout o cuerpo de la página fácilmente
+ * Genera estructuras HTML válidas a partir de entidades de la base de datos como:
+ * Tablas, formularios, selectores, listas, checkbox, botones radio y más
+ * Ofrece una API para la manipulación de la base de datos (más fácil que el SQL)
+ * Gestión de una caché interna (próximamente)
 
-LIGA.php posee en su núcleo una serie de funciones y métodos que le permitirá realizar sistemas web más rápidamente, especialmente si la base de datos es MySQL.
+LIGA.php 3 se distribuye bajo la licencia de software libre BSD de 3 cláusulas, la página oficial del proyecto está ahora en GitHub, donde podrá hacer sus aportaciones y reportar problemas.
 
-Entre sus principales funciones destacan:
-
-  * Ofrece una API para acceso y control de la base de datos,
-  * Permite crear estructuras de texto personalizadas a partir de la información,
-  * Ayuda a generar estructuras HTML válidas, como:
-  # Tablas
-  # Formularios
-  # Listas
-  # Selectores
-  # Botones radio
-  # Checkbox, y mucho más
-
-En breve se publicarán los manuales de uso.
+Manual de uso y desarrollo: http://goo.gl/OOics
