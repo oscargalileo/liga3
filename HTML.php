@@ -360,7 +360,11 @@ class HTML {
 	private static function opciones($tipo, $obj, $nombre, $props=false, $derecha=false) {
 		if (is_array($obj) && count($obj)) {
 			foreach ($obj as $k => $v) {
-				echo ($derecha) ? "<label><input type='$tipo' name='$nombre' value='$k'>$v</label> " : "<label>$v<input type='$tipo' name='$nombre' value='$k'></label> ";
+				$propsL = isset($props['label']) ? self::array2props($props['label']) : '';
+				$propsL.= isset($props["label[$v]"]) ? self::array2props($props["label[$v]"]) : '';
+				$propsI = isset($props['input']) ? self::array2props($props['input']) : '';
+				$propsI.= isset($props["input[$k]"]) ? self::array2props($props["input[$k]"]) : '';
+				echo ($derecha) ? "<label$propsL><input type='$tipo' name='$nombre' value='$k'$propsI>$v</label> " : "<label$propsL>$v<input type='$tipo' name='$nombre' value='$k'$propsI></label> ";
 			}
 		} elseif (get_class($obj) == 'LIGA' && $obj->numCol() > 1) {
 			$etiq  = self::etiq_props($obj, 'input', $props, false, "type='$tipo' name='$nombre' value='@[0]'");
