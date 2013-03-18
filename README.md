@@ -1,4 +1,4 @@
-LIGA3
+LIGA.php 3
 ==============
 El proyecto LIGA presenta LIGA.php 3, se trata de una reconstrucción total de la biblioteca retomando lo mejor de las versiones anteriores. Entre sus principales funciones destacan:
 
