@@ -161,7 +161,7 @@
     // Cambia algún dato en el objeto LIGA a partir del índice y la columna dada
     function cambiar($ind, $col, $dato) {
         $col = $this->col2num($col);
-        if (isset($this->info[$ind][$col])) {
+        if (isset($this->info()[$ind][$col])) {
             return ($this->info[$ind][$col] = $dato);
         }
         return null;
