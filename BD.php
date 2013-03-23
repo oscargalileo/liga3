@@ -10,9 +10,7 @@
     // Crea una nueva instancia de conexión a MySQL a partir de los parámetros dados
     function __construct($s='127.0.0.1', $u='root', $p='', $b='') {
         if (empty(self::$conn)) {
-            if(!self::$conn = new mysqli($s,$u,$p)) {
-                throw new Exception("[LIGA] Error de SQL al intentar conectar con $s $u $p");
-            }
+            self::$conn = new mysqli($s, $u, $p);
 	    self::$conn->query("SET NAMES 'utf8'");
         }
         if (!empty($b)) {
@@ -25,7 +23,6 @@
     }
     // Ejecuta una consulta SQL y obtiene el resultado o la cantidad de filas afectadas
     static function SQL($sql) {
-        self::$conn->query("SET NAMES 'utf8'");
         $resp = self::$conn->query($sql);
         if(self::$conn->error) {
 	    return '[LIGA] Error de SQL: '.self::$conn->error." con [$sql]";
