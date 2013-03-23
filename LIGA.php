@@ -119,7 +119,7 @@
         return (isset($fila[trim($col)])) ? $fila[trim($col)] : null;
     }
     // Alias de dato, se puede omitir el índice si este es cero
-    function d($ind, $col) {
+    function d($ind, $col='') {
       return is_int($ind) ? $this->dato($ind, $col) : $this->dato(0, $ind);
     }
     // Obtiene todas las filas (arreglos simples o asociativos) de la tabla o consulta
