@@ -19,6 +19,7 @@ class FUSION {
                require $file;
             }
             $cont = ob_get_clean();
+            $cont = preg_replace('/(?<!\S)\/\/\s*[^\r\n]*/', '', $cont);
             $cont = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $cont);
             $cont = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $cont);
             file_put_contents($archivo, $cont);
