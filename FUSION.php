@@ -25,7 +25,7 @@ class FUSION {
       $files = is_array($files) ? $files : func_get_args();
       if (is_array($files) && count($files) > 0) {
          try {
-            if (!is_dir(self::$dir))
+            if (self::$dir != '' && !is_dir(self::$dir))
                throw new Exception();
             $archivo = self::nombre($files);
             if (!file_exists($archivo)) {
