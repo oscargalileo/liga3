@@ -169,7 +169,7 @@ class HTML {
 		if (is_bool($cols) || $cols == '*') {
 			$cols = array_keys($liga->meta());
 		}
-		$cols = is_string($cols) ? explode(',', $cols) : $cols;
+		$cols = is_string($cols) ? array_map('trim',explode(',', $cols)) : $cols;
 		$cols = self::todos($liga, $cols);
 		if (is_array($cols) && count($cols) > 0) {
 			foreach($cols as $k => $v) {
@@ -230,7 +230,7 @@ class HTML {
 				echo htmlentities($legend, ENT_NOQUOTES, 'UTF-8');
 				echo "</legend>\n";
 			}
-			$cols = (is_array($cols) && count($cols) > 0) ? $cols : ((is_string($cols)) ? explode(',', $cols) : array_keys($liga->meta()));
+			$cols = (is_array($cols) && count($cols) > 0) ? $cols : ((is_string($cols)) ? array_map('trim',explode(',', $cols)) : array_keys($liga->meta()));
 			$cols = self::todos($liga, $cols);
 			if (count($cols) > 0) {
 				foreach ($cols as $k => $v) {
