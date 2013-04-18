@@ -4,14 +4,14 @@ class FUSION {
    static $dir = '';
    private function __construct() {}
    // Obtiene una versión comprimida de $cont
-   private function comprimir($cont) {
+   private static function comprimir($cont) {
       $cont = preg_replace('/(?<!\S)\/\/\s*[^\r\n]*/', '', $cont);
       $cont = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $cont);
       $cont = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $cont);
       return $cont;
    }
    // Obtiene el nombre para cache del conjunto de archivos
-   private function nombre($files) {
+   private static function nombre($files) {
       $llave = '';
       $ext   = substr($files[0], strrpos($files[0], '.')+1);
       foreach ($files as $file) {
