@@ -22,8 +22,13 @@
     private $idx = 0;
     // Crea una nueva instancia del objeto LIGA a partir de los parámetros
     function __construct($s1, $s2='', $s3='') {
+        if (is_array($s1) && count($s1) > 0) {
+            $s3 = isset($s1[2]) ? $s1[2] : $s3;
+            $s2 = isset($s1[1]) ? $s1[1] : $s2;
+            $s1 = isset($s1[0]) ? $s1[0] : '';
+        }
         if (is_string($s1) && !empty($s1)) {
-            $this->bd = new BD();
+            $this->bd = BD();
             $this->s  = $s1;
             $this->q  = $s2;
             $this->l  = $s3;
