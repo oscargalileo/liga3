@@ -173,7 +173,7 @@
             }
             $s .= $sq.$l;
         } else {
-            $s .= $q.$l;
+            $s .= $q.' '.$l;
         }
         $res = $this->consulta($s);
         $regs = array();
