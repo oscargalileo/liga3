@@ -239,7 +239,7 @@ class HTML {
 						echo self::etiq_props($liga, 'div', $props);
 						$label = (is_string($k) && is_string($v) && $v != '' && strpos($v, '<') === false) ? self::procesar($liga, $v) : self::mejorar($col);
 						$pref = (isset($props['prefid'])) ? self::procesar($liga, $props['prefid']) : '';
-						if (strpos($label, '<label for') === false) {
+						if (strpos($label, '<label for') === false && $label != '') {
 							$prop = (isset($props["label[$col]"])) ? htmlentities(self::procesar($liga, self::array2props($props["label[$col]"])),ENT_NOQUOTES,'UTF-8') : '';
 							$prop .= self::procesar($liga, self::prop_cond("label[$col]", $props));
 							$prop .= (isset($props['label'])) ? htmlentities(self::procesar($liga, self::array2props($props['label'])),ENT_NOQUOTES,'UTF-8') : '';
