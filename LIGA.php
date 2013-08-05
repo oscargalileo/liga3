@@ -140,9 +140,10 @@
     function buscar($q, $cols=true) {
         if (count($q) === 0) return array();
         $r = array();
+        $c = count($q);
         while ($f = $this->filas($cols)) {
-            $i = (array_intersect($q,$f));
-            if (count($i) > 0) $r[] = $f;
+            $i = (array_intersect_assoc($q, $f));
+            if (count($i) == $c) $r[] = $f;
         }
         return $r;
     }
