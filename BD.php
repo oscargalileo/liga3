@@ -217,7 +217,8 @@
             }
             $sets = '';
             foreach($datos as $k => $v) {
-                $sets .= ($sets==='') ? " `$k` = '$v' " : ", `$k` = '$v' ";
+                $v = ($v == '[null]') ? 'null' : "'$v'";
+                $sets .= ($sets==='') ? " `$k` = $v " : ", `$k` = $v ";
             }
             $sql = "update `$base`.`$tabla` set $sets $cual";
             return $this->consulta($sql);
