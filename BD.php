@@ -129,25 +129,27 @@
             $cols[$nom] = array('tabla'=>$col->table,'null'=>$null,'num'=>$num,'blob'=>$blob,'tipo'=>$tipo,'pri'=>false,'ai'=>false,'codif'=>false,'com'=>false,'max'=>0);
             if (count($bt) === 2) {
                 $resp = $this->consulta("show full columns from `$bt[0]`.`$bt[1]` like '$nom'");
-                $resp = $resp->fetch_assoc();
-                $cols[$nom]['codif'] = $resp['Collation'];
-                $cols[$nom]['pri']   = ($resp['Key']==='PRI') ? true : false;
-                $cols[$nom]['ai']    = ($resp['Extra']==='auto_increment') ? true : false;
-                $cols[$nom]['com']   = $resp['Comment'];
-                $cols[$nom]['nulo']  = $resp['Null']==='NO' && $resp['Default']===null && !$cols[$nom]['ai'] ? false : true;
-                $tipo = $resp['Type'];
-                $cols[$nom]['type']  = $tipo;
-                $cols[$nom]['num']   = $tipo==='timestamp' ? false : $cols[$nom]['num'];
-                if (strpos($tipo,'(') !== false) {
-                    $ini = strpos($tipo,'(')+1;
-                    $fin = strpos($tipo,')');
-                    $max = substr($tipo,$ini,$fin-$ini);
-                    $cols[$nom]['max'] = $max;
-                }
-                $resp = $this->consulta("SELECT CONCAT(REFERENCED_TABLE_SCHEMA,'.',referenced_table_name,'::',referenced_column_name) AS foranea FROM information_schema.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_SCHEMA = '$bt[0]' AND table_name = '$bt[1]' AND column_name = '$nom' AND REFERENCED_TABLE_NAME is not null");
-                if ($resp->num_rows === 1) {
-                    $resp = $resp->fetch_assoc();
-                    $cols[$nom]['referencia'] = $resp['foranea'];
+                if (!is_string($resp)) {
+	            $resp = $resp->fetch_assoc();
+	            $cols[$nom]['codif'] = $resp['Collation'];
+	            $cols[$nom]['pri']   = ($resp['Key']==='PRI') ? true : false;
+	            $cols[$nom]['ai']    = ($resp['Extra']==='auto_increment') ? true : false;
+	            $cols[$nom]['com']   = $resp['Comment'];
+	            $cols[$nom]['nulo']  = $resp['Null']==='NO' && $resp['Default']===null && !$cols[$nom]['ai'] ? false : true;
+	            $tipo = $resp['Type'];
+	            $cols[$nom]['type']  = $tipo;
+	            $cols[$nom]['num']   = $tipo==='timestamp' ? false : $cols[$nom]['num'];
+	            if (strpos($tipo,'(') !== false) {
+	                $ini = strpos($tipo,'(')+1;
+	                $fin = strpos($tipo,')');
+	                $max = substr($tipo,$ini,$fin-$ini);
+	                $cols[$nom]['max'] = $max;
+	            }
+	            $resp = $this->consulta("SELECT CONCAT(REFERENCED_TABLE_SCHEMA,'.',referenced_table_name,'::',referenced_column_name) AS foranea FROM information_schema.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_SCHEMA = '$bt[0]' AND table_name = '$bt[1]' AND column_name = '$nom' AND REFERENCED_TABLE_NAME is not null");
+	            if ($resp->num_rows === 1) {
+	                $resp = $resp->fetch_assoc();
+	                $cols[$nom]['referencia'] = $resp['foranea'];
+	            }
                 }
             }
         }
@@ -177,10 +179,14 @@
         }
         $res = $this->consulta($s);
         $regs = array();
-        while ($reg = $res->fetch_row()) {
-            $regs[] = $reg;
-        }
-        $res->free();
+	if (!is_string($res)) {
+	 while ($reg = $res->fetch_row()) {
+	     $regs[] = $reg;
+	 }
+	 $res->free();
+	} else {
+	 $regs = false;
+	}
         return $regs;
     }
     /**
