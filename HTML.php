@@ -2,7 +2,7 @@
 /**
  * Clase HTML
  * Para LIGA 3.x
- * Autor: Oscar Galileo García García
+ * Autor: Mtro. Oscar Galileo García García
  */
 class HTML {
 	// No se puede instanciar, quite () y use :: para usar sus funciones
@@ -100,26 +100,35 @@ class HTML {
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<title>'.$config['title'].'</title>
 		<meta name="description" content="'.$config['description'].'">
-		<meta name="viewport" content="width=device-width">'."\n";
-		if (!empty($config['meta']))
-		foreach ($config['meta'] as $name => $content) {
-			echo "\t\t<meta name=\"$name\" content=\"$content\">\n";
+		<meta name="viewport" content="width=device-width">';
+		if (!empty($config['meta'])) {
+			$config['meta'] = is_array($config['meta']) ? $config['meta'] : array($config['meta']);
+			foreach ($config['meta'] as $name => $content) {
+				echo "\n\t\t<meta name=\"$name\" content=\"$content\">";
+			}
 		}
-		if (!empty($config['css']))
-		foreach ($config['css'] as $i => $css) {
-			echo "\t\t<link rel=\"stylesheet\" href=\"$css\">\n";
+		if (!empty($config['css'])) {
+			//$config['css'] = is_array($config['css']) ? $config['css'] : array($config['css']);
+			$config['css'] = is_array($config['css']) ? $config['css'] : explode(',', $config['css']);
+			foreach ($config['css'] as $css) {
+				echo "\n\t\t",'<link rel="stylesheet" href="'.trim($css).'">';
+			}
 		}
-		if (!empty($config['js']))
-		foreach ($config['js'] as $i => $js) {
-			echo "\t\t<script src=\"$js\"></script>\n";
+		echo !empty($config['style']) ? "\n\t\t<style>$config[style]</style>" : '';
+		if (!empty($config['js'])) {
+			$config['js'] = is_array($config['js']) ? $config['js'] : explode(',', $config['js']);
+			foreach ($config['js'] as $js) {
+				echo "\n\t\t",'<script src="'.trim($js).'"></script>';
+			}
 		}
-		echo !empty($config['style']) ? "\t\t<style>$config[style]</style>\n" : '';
-		echo !empty($config['script']) ? "\t\t<script>$config[script]</script>\n" : '';
-		echo "\t".'</head>
+		echo !empty($config['script']) ? "\n\t\t<script>$config[script]</script>" : '';
+		flush();
+		echo "\n\t",'</head>
 	<body>
-		<!--[if lt IE 7]>
-		<p class="chromeframe">Está usando un navegador <strong>desactualizado</strong>. Favor de <a href="http://browsehappy.com/">actualizarlo</a> o <a href="http://www.google.com/chromeframe/?redirect=true">active Google Chrome Frame</a> para mejorar su experiencia.</p>
-		<![endif]-->'."\n";
+	 <!--[if lt IE 7]>
+	 <p class="chromeframe">Está usando un navegador <strong>desactualizado</strong>. Favor de <a href="http://browsehappy.com/">actualizarlo</a> o <a href="http://www.google.com/chromeframe/?redirect=true">active Google Chrome Frame</a> para mejorar su experiencia.</p>
+	 <![endif]-->'."\n";
+		flush();
 	}
 	// Genera el cuerpo del documento a partir del array asociativo
 	static function cuerpo($config) {
@@ -127,15 +136,19 @@ class HTML {
 			echo "<div id=\"$id\">";
 			echo is_string($cont) ? $cont : self::cuerpo($cont);
 			echo '</div>';
+			flush();
 		}
 	}
 	// Genera los etiquetas de cierre del HTML5 (http://html5boilerplate.com)
 	static function pie($config = array()) {
-		if (!empty($config['js']))
-		foreach ($config['js'] as $i => $js) {
-			echo "\t\t<script src=\"$js\"></script>\n";
+		if (!empty($config['js'])) {
+			$config['js'] = is_array($config['js']) ? $config['js'] : array($config['js']);
+			foreach ($config['js'] as $i => $js) {
+				echo "\t\t<script src=\"$js\"></script>\n";
+			}
 		}
 		echo !empty($config['script']) ? "\t\t    <script>$config[script]</script>\n" : '';
+		flush();
 		echo !empty($config['UA']) ? "\t\t<script>var _gaq=[['_setAccount','$config[UA]'],['_trackPageview']];
 			(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
 			g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
