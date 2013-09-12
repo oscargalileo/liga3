@@ -25,7 +25,7 @@
     static function SQL($sql) {
         $resp = self::$conn->query($sql);
         if(self::$conn->error) {
-	    return '[LIGA] Error de SQL: '.self::$conn->error." con [$sql]";
+	    return '[<strong style="color:#2B8C45"><span style="color:#DECC0B">LI</span>GA</strong>] <strong style="color:#ED5818">Error de SQL:</strong> <em>'.self::$conn->error."</em> con [<strong>$sql</strong>]<br />\n";
         }
         if (strpos(strtolower($sql), 'select ') !== false || strpos(strtolower($sql), 'show ') !== false) {
             return $resp;
@@ -48,7 +48,7 @@
     function consulta($sql) {
         $resp = self::$conn->query($sql);
         if(self::$conn->error) {
-	    return '[LIGA] Error de SQL: '.self::$conn->error." con [$sql]";
+	    return '[<strong style="color:#2B8C45"><span style="color:#DECC0B">LI</span>GA</strong>] <strong style="color:#ED5818">Error de SQL:</strong> <em>'.self::$conn->error."</em> con [<strong>$sql</strong>]<br />\n";
         }
         if (strpos(strtolower($sql), 'select ') !== false || strpos(strtolower($sql), 'show ') !== false) {
             return $resp;
@@ -113,46 +113,50 @@
             $s = (count($bt) === 2) ? "select * from `$bt[0]`.`$bt[1]` LIMIT 0" : "select * from `$bt[0]` LIMIT 0";
         }
         $res = $this->consulta($s);
-        $cols = array();
-        while ($col = $res->fetch_field()) {
-	    $nom  = $col->name;
-            $null = ($col->flags & 1) ? false : true;
-            $num  = ($col->flags & 32768) ? true : false;
-            $blob = ($col->flags & 16) ? true : false;
-	    $tipo = 'integer';
-	    $tipo = ($col->flags & 4 || $col->flags & 5 || $col->flags & 246) ? 'decimal' : $tipo;
-	    $tipo = ($col->flags & 10) ? 'date' : $tipo;
-	    $tipo = ($col->flags & 12) ? 'datetime' : $tipo;
-	    $tipo = ($col->flags & 7) ? 'timestamp' : $tipo;
-	    $tipo = ($col->flags & 11) ? 'time' : $tipo;
-	    $tipo = ($col->flags & 252 || $col->flags & 253 || $col->flags & 254) ? 'string' : $tipo;
-            $cols[$nom] = array('tabla'=>$col->table,'null'=>$null,'num'=>$num,'blob'=>$blob,'tipo'=>$tipo,'pri'=>false,'ai'=>false,'codif'=>false,'com'=>false,'max'=>0);
-            if (count($bt) === 2) {
-                $resp = $this->consulta("show full columns from `$bt[0]`.`$bt[1]` like '$nom'");
-                if (!is_string($resp)) {
-	            $resp = $resp->fetch_assoc();
-	            $cols[$nom]['codif'] = $resp['Collation'];
-	            $cols[$nom]['pri']   = ($resp['Key']==='PRI') ? true : false;
-	            $cols[$nom]['ai']    = ($resp['Extra']==='auto_increment') ? true : false;
-	            $cols[$nom]['com']   = $resp['Comment'];
-	            $cols[$nom]['nulo']  = $resp['Null']==='NO' && $resp['Default']===null && !$cols[$nom]['ai'] ? false : true;
-	            $tipo = $resp['Type'];
-	            $cols[$nom]['type']  = $tipo;
-	            $cols[$nom]['num']   = $tipo==='timestamp' ? false : $cols[$nom]['num'];
-	            if (strpos($tipo,'(') !== false) {
-	                $ini = strpos($tipo,'(')+1;
-	                $fin = strpos($tipo,')');
-	                $max = substr($tipo,$ini,$fin-$ini);
-	                $cols[$nom]['max'] = $max;
-	            }
-	            $resp = $this->consulta("SELECT CONCAT(REFERENCED_TABLE_SCHEMA,'.',referenced_table_name,'::',referenced_column_name) AS foranea FROM information_schema.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_SCHEMA = '$bt[0]' AND table_name = '$bt[1]' AND column_name = '$nom' AND REFERENCED_TABLE_NAME is not null");
-	            if ($resp->num_rows === 1) {
-	                $resp = $resp->fetch_assoc();
-	                $cols[$nom]['referencia'] = $resp['foranea'];
-	            }
-                }
-            }
-        }
+	$cols = array();
+	if (is_string($res)) {
+	    echo $res;
+	} else {
+	    while ($col = $res->fetch_field()) {
+	       $nom  = $col->name;
+	       $null = ($col->flags & 1) ? false : true;
+	       $num  = ($col->flags & 32768) ? true : false;
+	       $blob = ($col->flags & 16) ? true : false;
+	       $tipo = 'integer';
+	       $tipo = ($col->flags & 4 || $col->flags & 5 || $col->flags & 246) ? 'decimal' : $tipo;
+	       $tipo = ($col->flags & 10) ? 'date' : $tipo;
+	       $tipo = ($col->flags & 12) ? 'datetime' : $tipo;
+	       $tipo = ($col->flags & 7) ? 'timestamp' : $tipo;
+	       $tipo = ($col->flags & 11) ? 'time' : $tipo;
+	       $tipo = ($col->flags & 252 || $col->flags & 253 || $col->flags & 254) ? 'string' : $tipo;
+	       $cols[$nom] = array('tabla'=>$col->table,'null'=>$null,'num'=>$num,'blob'=>$blob,'tipo'=>$tipo,'pri'=>false,'ai'=>false,'codif'=>false,'com'=>false,'max'=>0);
+	       if (count($bt) === 2) {
+		   $resp = $this->consulta("show full columns from `$bt[0]`.`$bt[1]` like '$nom'");
+		   if (!is_string($resp)) {
+		       $resp = $resp->fetch_assoc();
+		       $cols[$nom]['codif'] = $resp['Collation'];
+		       $cols[$nom]['pri']   = ($resp['Key']==='PRI') ? true : false;
+		       $cols[$nom]['ai']    = ($resp['Extra']==='auto_increment') ? true : false;
+		       $cols[$nom]['com']   = $resp['Comment'];
+		       $cols[$nom]['nulo']  = $resp['Null']==='NO' && $resp['Default']===null && !$cols[$nom]['ai'] ? false : true;
+		       $tipo = $resp['Type'];
+		       $cols[$nom]['type']  = $tipo;
+		       $cols[$nom]['num']   = $tipo==='timestamp' ? false : $cols[$nom]['num'];
+		       if (strpos($tipo,'(') !== false) {
+			   $ini = strpos($tipo,'(')+1;
+			   $fin = strpos($tipo,')');
+			   $max = substr($tipo,$ini,$fin-$ini);
+			   $cols[$nom]['max'] = $max;
+		       }
+		       $resp = $this->consulta("SELECT CONCAT(REFERENCED_TABLE_SCHEMA,'.',referenced_table_name,'::',referenced_column_name) AS foranea FROM information_schema.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_SCHEMA = '$bt[0]' AND table_name = '$bt[1]' AND column_name = '$nom' AND REFERENCED_TABLE_NAME is not null");
+		       if ($resp->num_rows === 1) {
+			   $resp = $resp->fetch_assoc();
+			   $cols[$nom]['referencia'] = $resp['foranea'];
+		       }
+		   }
+	       }
+	   }
+	}
         return $cols;
     }
     // Obtenemos los registros a partir de la consulta
