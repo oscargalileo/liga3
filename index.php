@@ -2,7 +2,7 @@
  // Cargamos LIGA3
  require_once 'LIGA.php';
  // Personalizo una conexión a la base de datos (servidor, usuario, contraseña, schema)
- BD('localhost', 'root', 'cuci12', 'base');
+ BD('localhost', 'root', '', 'base');
  
  // Configuramos la entidad a usar
  $tabla = 'puestos';
@@ -31,7 +31,7 @@
   // Imprimo las cabeceras HTML5
   HTML::cabeceras(array('title'      =>'Pruebas LIGA 3',
 			'description'=>'Página de pruebas para LIGA 3',
-			'css'        =>array('LIGA.css'),
+			'css'        =>'LIGA.css',
 			'style'      =>'label { width:100px; }'
 			)
 		  );
