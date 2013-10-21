@@ -249,7 +249,8 @@
                 $meta = $this->meta($base.'.'.$tabla);
                 $cols = array_keys($meta);
                 $llave = $cols[0];
-                $datos = (strpos($datos, ',') === false) ? "where `$llave` = '$datos' " : "where `$llave` in ($datos) ";
+                //$datos = (strpos($datos, ',') === false) ? "where `$llave` = '$datos' " : "where `$llave` in ($datos) ";
+		$datos = "where `$llave` in ($datos) ";
             }
             $sql = "delete from `$base`.`$tabla` $datos";
             return $this->consulta($sql);
