@@ -10,6 +10,9 @@
  function LIGA($s, $q='', $l='') {
     return new LIGA($s, $q, $l);
  }
+ function LIGAC($s, $q='', $l='') {
+    return new LIGAC($s, $q, $l);
+ }
  // Personaliza una conexión a la base de datos sin new
  function BD($s='127.0.0.1', $u='root', $p='', $b='') {
     return new BD($s, $u, $p, $b);
@@ -18,7 +21,7 @@
  class LIGA {
     private $s, $q, $l;
     private $bd;
-    private $meta, $info;
+    public  $meta, $info;
     private $idx = 0;
     // Crea una nueva instancia del objeto LIGA a partir de los parámetros
     function __construct($s1, $s2='', $s3='') {
