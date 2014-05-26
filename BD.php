@@ -201,6 +201,9 @@
     	$tb = $this->base_tabla($s);
         if ($tb[0] && $tb[1]) {
             $cols = '(`'.implode('`,`', array_keys($datos)).'`)';
+            foreach($datos as $k => $v) {
+                $datos[$k] = self::$conn->real_escape_string($v);
+            }
             $vals = "('".implode("','", $datos)."')";
             $sql  = "insert into `$tb[0]`.`$tb[1]` $cols value $vals";
             return $this->consulta($sql);
@@ -227,6 +230,8 @@
             }
             $sets = '';
             foreach($datos as $k => $v) {
+            	$k = self::$conn->real_escape_string($k);
+		$v = self::$conn->real_escape_string($v);
                 $v = ($v == '[null]') ? 'null' : "'$v'";
                 $sets .= ($sets==='') ? " `$k` = $v " : ", `$k` = $v ";
             }
@@ -244,12 +249,14 @@
         if ($tb[0] && $tb[1]) {
             $base  = $tb[0];
             $tabla = $tb[1];
+            foreach ($datos as $k => $v) {
+            	$datos[$k] = self::$conn->real_escape_string($v);
+            }
             $datos = is_array($datos) ? "'".implode("','", $datos)."'" : $datos;
             if (strpos($datos, 'where ') === false) {
                 $meta = $this->meta($base.'.'.$tabla);
                 $cols = array_keys($meta);
                 $llave = $cols[0];
-                //$datos = (strpos($datos, ',') === false) ? "where `$llave` = '$datos' " : "where `$llave` in ($datos) ";
 		$datos = "where `$llave` in ($datos) ";
             }
             $sql = "delete from `$base`.`$tabla` $datos";
