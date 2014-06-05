@@ -249,9 +249,6 @@
         if ($tb[0] && $tb[1]) {
             $base  = $tb[0];
             $tabla = $tb[1];
-            foreach ($datos as $k => $v) {
-            	$datos[$k] = self::$conn->real_escape_string($v);
-            }
             $datos = is_array($datos) ? "'".implode("','", $datos)."'" : $datos;
             if (strpos($datos, 'where ') === false) {
                 $meta = $this->meta($base.'.'.$tabla);
