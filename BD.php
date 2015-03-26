@@ -249,7 +249,7 @@
         if ($tb[0] && $tb[1]) {
             $base  = $tb[0];
             $tabla = $tb[1];
-            $datos = is_array($datos) ? "'".implode("','", $datos)."'" : $datos;
+            $datos = is_array($datos) ? "'".implode("','", $datos)."'" : "'$datos'";
             if (strpos($datos, 'where ') === false) {
                 $meta = $this->meta($base.'.'.$tabla);
                 $cols = array_keys($meta);
