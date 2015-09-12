@@ -1,9 +1,9 @@
 <?php
 /**
  * Clase RUTA
- * Para LIGA 3.x
+ * Para LIGA 3
  * Autor: Mtro. Oscar Galileo García García
- * Thanks: http://code.tutsplus.com/tutorials/using-htaccess-files-for-pretty-urls--net-6049
+ * Agradecimiento a: http://code.tutsplus.com/tutorials/using-htaccess-files-for-pretty-urls--net-6049
  * Se recomienda en el .htaccess
 Options -Indexes
 RewriteEngine On

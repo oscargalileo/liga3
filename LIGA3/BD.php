@@ -1,8 +1,8 @@
 <?php
  /**
-  * Manejador de MySQLi o MariaDB
-  * Para LIGA 3.x
-  * Autor: Oscar Galileo García García
+  * Manejador con MySQLi
+  * Para LIGA 3
+  * Autor: Mtro. Oscar Galileo García García
   */
  class BD {
     static  $conn;

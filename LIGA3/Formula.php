@@ -1,5 +1,5 @@
 <?php
- // Formulas para LIGA 3.x
+ // Formulas para LIGA 3
  class Formula {
     // No se puede instanciar, quite () y use :: para usar sus funciones
     private function __construct() {}

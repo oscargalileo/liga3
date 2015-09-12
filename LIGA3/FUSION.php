@@ -1,5 +1,5 @@
 <?php
-// Fusión de archivos para LIGA 3.x
+// Fusión de archivos para LIGA 3
 class FUSION {
    static $dir = '';
    private function __construct() {}

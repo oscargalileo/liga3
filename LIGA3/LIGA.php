@@ -1,7 +1,7 @@
 <?php
  /**
-  * LIGA 3.0
-  * Autor: Ing. Oscar Galileo García García
+  * LIGA 3
+  * Autor: Mtro. Oscar Galileo García García
   */
  function __autoload($clase) {
     require_once "$clase.php";

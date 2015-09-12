@@ -1,7 +1,7 @@
 <?php
 /**
  * Clase HTML
- * Para LIGA 3.x
+ * Para LIGA 3
  * Autor: Mtro. Oscar Galileo García García
  */
 class HTML {
