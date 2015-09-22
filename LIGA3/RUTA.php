@@ -24,9 +24,10 @@ class RUTA {
     static function nueva($ruta, $func) {
         self::$rutas[$ruta] = $func;
     }
-    static function run() {
-        self::$uri = $_SERVER['REQUEST_URI'];
-        foreach (explode('/', $_SERVER['REQUEST_URI']) as $param) {
+    static function run($ruta = null) {
+        self::$LPAR = array();
+        self::$uri = $ruta ? substr(self::$base, strpos(self::$base, '/', 2)).$ruta : $_SERVER['REQUEST_URI'];
+        foreach (explode('/', self::$uri) as $param) {
             if ($param) {
              $param = urldecode($param);
              if (($pos = strpos($param, '?')) !== false) {
@@ -47,7 +48,7 @@ class RUTA {
                     $rut = explode('/', $ruta);
                     $coinc = 0;
                     foreach ($rut as $k => $ru) {
-                        if (isset(self::$LPAR[$k+1]) && ($ru == self::$LPAR[$k+1] || preg_match('/^'.$ru.'$/', self::$LPAR[$k+1]))) {
+                        if (isset(self::$LPAR[$k+1]) && ($ru == self::$LPAR[$k+1] || preg_match('/(*UTF8)^'.$ru.'$/', self::$LPAR[$k+1]))) {
                             $coinc++;
                         } else {
                             $coinc = 0;
@@ -68,7 +69,11 @@ class RUTA {
         if (!headers_sent()) {
             header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found');
         }
-        echo self::$error;
+        if (is_callable(self::$error)) {
+            self::$error();
+        } else {
+            echo self::$error;
+        }
         return false;
     }
 }
