@@ -26,7 +26,7 @@ class RUTA {
     }
     static function run($ruta = null) {
         self::$LPAR = array();
-        self::$uri = $ruta ? substr(self::$base, strpos(self::$base, '/', 2)).$ruta : $_SERVER['REQUEST_URI'];
+        self::$uri = $ruta ? $ruta : substr($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'], strlen(self::$base)-2);
         foreach (explode('/', self::$uri) as $param) {
             if ($param) {
              $param = urldecode($param);
@@ -38,33 +38,30 @@ class RUTA {
              }
             }
         }
-        if (count(self::$LPAR) > 1) {
-            $lpar = self::$LPAR;
-            unset($lpar[0]);
-            $coincide = false;
-            $ruts = array_keys(self::$rutas);
-            foreach ($ruts as $ruta) {
-                if (!$coincide) {
-                    $rut = explode('/', $ruta);
-                    $coinc = 0;
-                    foreach ($rut as $k => $ru) {
-                        if (isset(self::$LPAR[$k+1]) && ($ru == self::$LPAR[$k+1] || preg_match('/(*UTF8)^'.$ru.'$/', self::$LPAR[$k+1]))) {
-                            $coinc++;
-                        } else {
-                            $coinc = 0;
-                            break;
-                        }
-                    }
-                    if (count($lpar) == $coinc) {
-                        $coincide = $ruta;
+        $lpar = self::$LPAR;
+        $coincide = false;
+        $ruts = array_keys(self::$rutas);
+        foreach ($ruts as $ruta) {
+            if (!$coincide) {
+                $rut = explode('/', $ruta);
+                $coinc = 0;
+                foreach ($rut as $k => $ru) {
+                    if (isset(self::$LPAR[$k]) && ($ru == self::$LPAR[$k] || preg_match('/(*UTF8)^'.$ru.'$/', self::$LPAR[$k]))) {
+                        $coinc++;
+                    } else {
+                        $coinc = 0;
+                        break;
                     }
                 }
+                if (count($lpar) == $coinc) {
+                    $coincide = $ruta;
+                }
             }
-            if ($coincide) {
-                $func = self::$rutas[$coincide];
-                $func();
-                return true;
-            }
+        }
+        if ($coincide) {
+            $func = self::$rutas[$coincide];
+            $func();
+            return true;
         }
         if (!headers_sent()) {
             header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found');
