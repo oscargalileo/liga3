@@ -53,7 +53,7 @@ class RUTA {
                         break;
                     }
                 }
-                if (count($lpar) == $coinc) {
+                if (count($lpar) > 0 && count($lpar) == $coinc) {
                     $coincide = $ruta;
                 }
             }
