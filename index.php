@@ -65,7 +65,7 @@
  
   // Estuctura el cuerpo de la página
   HTML::cuerpo(array('cont'=>$cont));
-  
+  echo '<a href="enrutador/">Probar enrutador (RUTA)</a>';
   // Cierre de etiquetas HTML
   HTML::pie();
 ?>
