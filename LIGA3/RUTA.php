@@ -13,10 +13,10 @@ RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^.*$ - [NC,L]
 RewriteRule ^.*$ index.php [NC,L]
  */
-
+define('BASE', substr('//'.$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'], 0, strrpos('//'.$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'], '/')+1 ));
 class RUTA {
     static $LPAR = array();
-    static $base  = '';
+    static $base  = BASE;
     static $error = '<p>Error 404: Dirección inválida.</p>';
     static $uri   = '';
     static $rutas = array();
