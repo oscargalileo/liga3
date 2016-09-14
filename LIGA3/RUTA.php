@@ -15,10 +15,11 @@ RewriteRule ^.*$ index.php [NC,L]
  */
 define('BASE', substr('//'.$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'], 0, strrpos('//'.$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'], '/')+1 ));
 class RUTA {
-    static $LPAR = array();
+    static $LPAR  = array();
     static $base  = BASE;
     static $error = '<p>Error 404: Dirección inválida.</p>';
     static $uri   = '';
+    static $url   = '';
     static $rutas = array();
     private function __construct() {}
     static function nueva($ruta, $func) {
@@ -27,6 +28,7 @@ class RUTA {
     static function run($ruta = null) {
         self::$LPAR = array();
         self::$uri = $ruta ? $ruta : substr($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'], strlen(self::$base)-2);
+        self::$url = self::$base.self::$uri;
         foreach (explode('/', self::$uri) as $param) {
             if ($param) {
              $param = urldecode($param);
