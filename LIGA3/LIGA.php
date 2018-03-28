@@ -21,7 +21,8 @@
  class LIGA {
     private $s, $q, $l;
     private $bd;
-    public  $meta, $info;
+    public  $meta = array();
+    public  $info = array();
     private $idx = 0;
     // Crea una nueva instancia del objeto LIGA a partir de los parámetros
     function __construct($s1, $s2='', $s3='') {
