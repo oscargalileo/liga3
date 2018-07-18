@@ -23,11 +23,13 @@ class RUTA {
     static $rutas = array();
     private function __construct() {}
     static function nueva($ruta, $func) {
+        $ruta = $ruta == '' ? ' ' : $ruta;
         self::$rutas[$ruta] = $func;
     }
     static function run($ruta = null) {
         self::$LPAR = array();
         self::$uri = $ruta ? $ruta : substr($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'], strlen(self::$base)-2);
+        self::$uri = self::$uri!==false ? self::$uri : ' ';
         self::$url = self::$base.self::$uri;
         foreach (explode('/', self::$uri) as $param) {
             if ($param) {
