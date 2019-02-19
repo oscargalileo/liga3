@@ -3,9 +3,9 @@
   * LIGA 3
   * Autor: Mtro. Oscar Galileo García García
   */
- function __autoload($clase) {
+ spl_autoload_register(function($clase) {
     require_once "$clase.php";
- }
+ });
  // Permite crear el objeto LIGA sin new
  function LIGA($s, $q='', $l='') {
     return new LIGA($s, $q, $l);
