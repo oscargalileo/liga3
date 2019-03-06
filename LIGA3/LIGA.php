@@ -236,6 +236,7 @@
         if (is_string($cad) && !empty($cad) && strpos($cad, '@[') !== false && $this->numReg() && $this->numCol()) {
             $info = $this->info();
             foreach($info as $k => $v) {
+                $this->idx++;
                 echo $this->ejec($this->vars($k, $cad));
             }
             return true;
