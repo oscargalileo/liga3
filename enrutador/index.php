@@ -1,8 +1,7 @@
 <?php
  // Cargamos LIGA3
  require_once '../LIGA3/LIGA.php';
- // Configuramos el directorio base
- RUTA::$base = '//localhost/LIGA3/enrutador/';
+
  // Creo una ruta básica
  RUTA::nueva('holaMundo', function() {
   echo '<h1>Hola mundo con el enrutador de LIGA.php</h1>';
