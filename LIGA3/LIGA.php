@@ -42,14 +42,14 @@
     }
     // Obtiene y/o actualiza la meta información a partir de la consulta o tabla
     function meta($f=false) {
-        if (count($this->meta) === 0 || $f) {
+         if ((is_array($this->meta) && count($this->meta) === 0) || $f) {
             return ($this->meta = $this->bd->meta($this->s));
         }
         return $this->meta;
     }
     //Obtiene y/o actualiza los registros a partir de la consulta completa
     function info($f=false) {
-        if (count($this->info) === 0 || $f) {
+        if ((is_array($this->info) && count($this->info) === 0) || $f) {
             return ($this->info = $this->bd->info($this->s, $this->q, $this->l));
         }
         return $this->info;
