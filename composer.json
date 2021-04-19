@@ -4,7 +4,7 @@
     "keywords": ["LIGA", "HTML", "MySQL", "RUTA", "FUSION"],
     "homepage": "https://github.com/oscargalileo/LIGA3",
     "type": "library",
-    "license": "BSD-3",
+    "license": "BSD-3-Clause",
     "authors": [
         {
             "name": "Oscar Galileo García García",
