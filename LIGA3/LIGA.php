@@ -17,7 +17,6 @@
  function BD($s='127.0.0.1', $u='root', $p='', $b='') {
     return new BD($s, $u, $p, $b);
  }
- 
  class LIGA {
     private $s, $q, $l;
     private $bd;
@@ -42,17 +41,19 @@
     }
     // Obtiene y/o actualiza la meta información a partir de la consulta o tabla
     function meta($f=false) {
-         if ((is_array($this->meta) && count($this->meta) === 0) || $f) {
-            return ($this->meta = $this->bd->meta($this->s));
+        $m = $this->meta;
+        if ((is_array($m) && count($m) === 0) || $f) {
+            return ($m = $this->bd->meta($this->s));
         }
-        return $this->meta;
+        return $m;
     }
     //Obtiene y/o actualiza los registros a partir de la consulta completa
     function info($f=false) {
-        if ((is_array($this->info) && count($this->info) === 0) || $f) {
-            return ($this->info = $this->bd->info($this->s, $this->q, $this->l));
+        $i = $this->info;
+        if ((is_array($i) && count($i) === 0) || $f) {
+            return ($i = $this->bd->info($this->s, $this->q, $this->l));
         }
-        return $this->info;
+        return $i;
     }
     // Limpia la caché del objeto para atraer registros actualizados
     function actualizar() {
@@ -104,11 +105,11 @@
     }
     // Obtiene el número de registros en la tabla o consulta vinculada
     function numReg() {
-        return count($this->info());
+        return is_array($this->info()) ? count($this->info()) : 0;
     }
     // Obtiene el número de columnas en la tabla o consulta vinculada
     function numCol() {
-        return count($this->meta());
+        return is_array($this->meta()) ? count($this->meta()) : 0;
     }
     // Obtiene una fila (arreglo simple o asociativo) a partir del índice dado
     function fila($ind, $cols=true) {
