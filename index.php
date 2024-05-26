@@ -3,10 +3,12 @@
  require_once 'LIGA3/LIGA.php';
  
  // Personalizo una conexión a la base de datos (servidor, usuario, contraseña, schema)
- BD('localhost', 'root', '', 'base');
+ BD('127.0.0.1', 'root', '', 'base');
  
  // Configuramos la entidad a usar
- $tabla = 'usuarios';
+ $tabla = 'usuarios_puestos';
+ $usuarios = LIGA('usuarios');
+ $puestos  = LIGA('puestos');
  $liga  = LIGA($tabla);
 
  // Controlador de acciones
@@ -40,10 +42,10 @@
  // Guardo el bufer para colocarlo en el layout
  ob_start();
  // Tabla con instancias
-  $cols = array('*', '-contraseña', 'acción'=>'<a href="?borrar=@[0]">Borrar</a>');
-  $join = array('depende'=>$liga);
+  $cols = array('*', '-contraseña', 'Columna nueva'=>'<a href="?borrar=@[0]">Borrar</a>');
+  $join = array('depende'=>$liga, 'usuario'=>$usuarios, 'puesto'=>$puestos);
   $pie  = '<th colspan="@[numCols]">Total de instancias: @[numReg]</th>';
-  HTML::tabla($liga, 'Instancias de '.$tabla, $cols, true, $join, $pie);
+  HTML::tabla($liga, 'Instancias de '.$tabla, $cols, false, $join, $pie);
   
   // Formulario para crear nuevas instancias
   $props  = array('form'=>'method="POST" action="?accion=insertar"',
@@ -55,10 +57,10 @@
   $props  = array('form'=>array('method'=>'POST', 'action'=>'?accion=modificar'), 'prefid'=>'algo',
 		  'input[puesto]'=>array('required'=>'required'));
   $cual   = !empty($_POST['cual']) ? $_POST['cual'] : '';
-  $select = HTML::selector($liga, 1, array('select'=>array('name'=>'cual', 'id'=>'algocual'),
-							 'option'=>array('value'=>'@[0]'),
-							 "option@si('$cual'=='@[0]')"=>array('selected'=>'selected')), array('depende'=>$liga)
-			   );
+  $props_select = array('select'=>array('name'=>'cual', 'id'=>'algocual'),
+						'option'=>array('value'=>'@[0]'),
+						"option@si('$cual'=='@[0]')"=>array('selected'=>'selected'));
+  $select = HTML::selector($liga, 1, $props_select, $join, true, 16);
   $campos = array('cual'=>$select, '*', '-fecha');
   HTML::forma($liga, 'Modificar '.$tabla, $campos, $props, true);
  $cont = ob_get_clean();
@@ -68,4 +70,3 @@
   echo '<a href="enrutador/">Probar enrutador (RUTA)</a>';
   // Cierre de etiquetas HTML
   HTML::pie();
-?>
