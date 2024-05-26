@@ -160,27 +160,15 @@ class HTML {
 				$v = (get_class($v) == 'LIGA') ? $v->arreglo() : $v;
 				if (is_array($v) && count($v) > 0 && $liga->existe($k)) {
 					$con = 0;
-					//$info = array();
-					//$cols = array_keys($liga->meta());
 					while (($dato = $liga->dato($con, $k)) !== null) {
-						//$inf[$con] = $liga->fila($con, true);
-						//foreach ($inf[$con] as $ll => $dat) {
-						//	$info[$con][$ll] = $dat;
-						//}
 						if (isset($v[$dato])) {
-							//echo "$v[$dato] XD";
 							$liga->cambiar($con, $k, $v[$dato]);
-							//$liga->info[$con][$k] = &$v[$dato];
-							//$info[$con][$k] = $v[$dato];
-						} else {
-							//$info[$con][$k] = $inf[$con][$k];
 						}
 						++$con;
 					}
-					//$liga->info = $info;
 				}
 			}
-		}//*/
+		}
 		$ths = '';
 		$tds = '';
 		if (is_bool($cols) || $cols == '*') {
