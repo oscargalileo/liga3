@@ -78,4 +78,3 @@ class RUTA {
         return false;
     }
 }
-?>

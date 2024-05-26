@@ -62,4 +62,3 @@
         return self::min_max('min', $liga, $col);
     }
  }
-?>

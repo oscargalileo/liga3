@@ -49,7 +49,7 @@
     }
     //Obtiene y/o actualiza los registros a partir de la consulta completa
     function info($f=false) {
-        $i = $this->info;
+        $i = &$this->info;
         if ((is_array($i) && count($i) === 0) || $f) {
             return ($i = $this->bd->info($this->s, $this->q, $this->l));
         }
@@ -75,7 +75,7 @@
     function col2num($col) {
         if (is_string($col) && $col != '') {
             $cols = array_keys($this->meta());
-            $pos = array_search($col, $cols);
+            $pos = array_search(trim($col), $cols);
             if ($pos !== false) {
                 return $pos;
             }
@@ -117,7 +117,10 @@
         if (isset($info[$ind])) {
             if ($cols) {
                 $llaves = array_keys($this->meta());
-                return array_combine($llaves, array_slice($info[$ind], 0, count($llaves)));
+                $valors = array_slice($info[$ind], 0, count($llaves));
+                if (count($llaves) === count($valors)) {
+                    return array_combine($llaves, $valors);
+                }
             }
             return $info[$ind];
         }
@@ -174,7 +177,9 @@
         $col  = $this->col2num($col);
         $info = $this->info();
         if (isset($info[$ind][$col])) {
-            return ($this->info[$ind][$col] = $dato);
+            $this->info[$ind][$col] = $dato;
+            //var_dump($this->info());
+            return $dato;
         }
         return null;
     }
@@ -185,9 +190,11 @@
             $f = $pos2;
             $cont = substr($cad, $i, $f-$i+1);
             $pars = explode(',', substr($cad, $i+2, $f-$i-2), 2);
-            $pars[0] = html_entity_decode($pars[0], ENT_QUOTES, 'UTF-8');
-            $res = (isset($pars[1])) ? $this->p($pars[0], $pars[1]) : $this->d($ind, $pars[0]);
-            $res = htmlentities($res, ENT_NOQUOTES, 'UTF-8');
+            if (isset($pars[1])) {
+                $res = $this->existe($pars[0]) ? $this->p($pars[0], $pars[1]) : $this->d($ind, $pars[0]);
+            } else {
+                $res = $this->d($ind, $pars[0]);
+            }
             if (!$this->existe($pars[0])) {
                 $pars = trim($pars[0]);
                 if ($pars === 'numReg') {
@@ -216,7 +223,6 @@
             $ret  = @eval($cod.';');
             $res  = ob_get_clean();
             $res .= $ret;
-            $res  = htmlentities($res, ENT_NOQUOTES, 'UTF-8');
             $res  = ($comillas) ? "'$res'" : $res;
             $cad  = str_replace($cont, $res, $cad);
             $cad  = $this->ejec($cad, $comillas);
@@ -297,4 +303,3 @@
         return 0;
     }
  }
-?>

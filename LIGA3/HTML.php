@@ -11,7 +11,7 @@ class HTML {
 	// Obtiene una cadena mejorada para mostrar en los títulos de columna
 	private static function mejorar($cad) {
 		$cad = preg_replace('/([a-z])([A-Z])/', '$1 $2', $cad);
-		return utf8_encode(ucwords(strtolower(str_replace('_',' ',utf8_decode($cad)))));
+		return ucwords(strtolower(str_replace('_',' ',$cad)));
 	}
 	// Obtiene una cadena a partir de un arreglo al estilo de propiedades HTML
 	private static function array2props($prop) {
@@ -88,19 +88,14 @@ class HTML {
 		return $liga->ejec($liga->vars($ind, $cad, $comillas));
 	}
 	// Genera los encabezado HTML5 de la página (http://html5boilerplate.com)
-	static function cabeceras($config) {
+	static function cabeceras($config=array('title'=>'LIGA.php', 'description'=>'Sitio creado con LIGA.php')) {
 		echo '<!DOCTYPE html>
-<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!-->
-<html class="no-js"> <!--<![endif]-->
+<html>
 	<head>
 		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>'.$config['title'].'</title>
-		<meta name="description" content="'.$config['description'].'">
-		<meta name="viewport" content="width=device-width">';
+		<meta name="description" content="'.$config['description'].'">';
 		if (!empty($config['meta'])) {
 			$config['meta'] = is_array($config['meta']) ? $config['meta'] : array($config['meta']);
 			foreach ($config['meta'] as $name => $content) {
@@ -124,10 +119,7 @@ class HTML {
 		echo !empty($config['script']) ? "\n\t\t<script>$config[script]</script>" : '';
 		flush();
 		echo "\n\t",'</head>
-	<body>
-	 <!--[if lt IE 7]>
-	 <p class="chromeframe">Está usando un navegador <strong>desactualizado</strong>. Favor de <a href="http://browsehappy.com/">actualizarlo</a> o <a href="http://www.google.com/chromeframe/?redirect=true">active Google Chrome Frame</a> para mejorar su experiencia.</p>
-	 <![endif]-->'."\n";
+	<body>'."\n";
 		flush();
 	}
 	// Genera el cuerpo del documento a partir del array asociativo
@@ -165,18 +157,30 @@ class HTML {
 		}
 		if ($joins && is_array($joins) && count($joins) > 0) {
 			foreach ($joins as $k => $v) {
-				if ($liga->existe($k)) {
-					$v = (is_array($v)) ? $v : $v->arreglo();
-					if (is_array($v) && count($v) > 0) {
-						$con = 0;
-						while (($dato = $liga->d($con, $k)) !== null) {
-							(isset($v[$dato])) ? $liga->cambiar($con, $k, $v[$dato]) : '';
-							$con++;
+				$v = (get_class($v) == 'LIGA') ? $v->arreglo() : $v;
+				if (is_array($v) && count($v) > 0 && $liga->existe($k)) {
+					$con = 0;
+					//$info = array();
+					//$cols = array_keys($liga->meta());
+					while (($dato = $liga->dato($con, $k)) !== null) {
+						//$inf[$con] = $liga->fila($con, true);
+						//foreach ($inf[$con] as $ll => $dat) {
+						//	$info[$con][$ll] = $dat;
+						//}
+						if (isset($v[$dato])) {
+							//echo "$v[$dato] XD";
+							$liga->cambiar($con, $k, $v[$dato]);
+							//$liga->info[$con][$k] = &$v[$dato];
+							//$info[$con][$k] = $v[$dato];
+						} else {
+							//$info[$con][$k] = $inf[$con][$k];
 						}
+						++$con;
 					}
+					//$liga->info = $info;
 				}
 			}
-		}
+		}//*/
 		$ths = '';
 		$tds = '';
 		if (is_bool($cols) || $cols == '*') {
@@ -313,7 +317,9 @@ class HTML {
 		echo ($completo) ? self::etiq_props($liga, 'select', $props) : '';
 		if ($liga->numCol() > 0 && $liga->numReg() > 0) {
 			$cont = ($liga->existe($cols)) ? "@[$cols]" : $cols;
-			$cont = (is_integer($car) && $car > 0) ? "@{if($car<strlen(utf8_decode(html_entity_decode('$cont', ENT_QUOTES, 'UTF-8')))-1)return substr(html_entity_decode('$cont', ENT_QUOTES, 'UTF-8'),0,$car).'...';else return html_entity_decode('$cont', ENT_QUOTES, 'UTF-8')}@" : $cont;
+			if (is_integer($car) && $car > 0) {
+				$cont = "@{if($car < mb_strlen('$cont')) return mb_substr('$cont', 0, $car).'...';else return '$cont'}@";
+			}
 			$option = self::etiq_props($liga, 'option', $props, false);
 			$option = "$option$cont</option>";
 			$llaves = is_array($optgroup) ? array_keys($optgroup) : array();
@@ -325,9 +331,11 @@ class HTML {
 					$grupos = $grupos->arreglo();
 				}
 				foreach ($grupos as $k => $v) {
-					$v = htmlentities($v, ENT_QUOTES, 'UTF-8');
 					$prop = (isset($props['optgroup'])) ? self::procesar($liga, $props['optgroup']) : '';
 					$prop .= self::prop_cond('optgroup', $props);
+					if (is_integer($car) && $car > 0 && mb_strlen($v)>$car) {
+						$v = mb_substr($v, 0, $car).'...';
+					}
 					echo "<optgroup label='$v'$prop>";
 					$info = $liga->info();
 					foreach ($info as $idx => $dat) {
@@ -399,4 +407,3 @@ class HTML {
 		return ob_get_clean();
 	}
 }
-?>

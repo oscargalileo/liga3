@@ -38,4 +38,3 @@
         apc_clear_cache('user');
     }
  }
-?>
