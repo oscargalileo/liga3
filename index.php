@@ -3,12 +3,10 @@
  require_once 'LIGA3/LIGA.php';
  
  // Personalizo una conexión a la base de datos (servidor, usuario, contraseña, schema)
- BD('127.0.0.1', 'root', '', 'base');
+ BD('localhost', 'root', '', 'base');
  
  // Configuramos la entidad a usar
- $tabla = 'usuarios_puestos';
- $usuarios = LIGA('usuarios');
- $puestos  = LIGA('puestos');
+ $tabla = 'usuarios';
  $liga  = LIGA($tabla);
 
  // Controlador de acciones
@@ -32,7 +30,7 @@
   exit(0);
  }
   // Imprimo las etiquetas HTML iniciales
-  HTML::cabeceras(array('title'      =>'Pruebas LIGA 3',
+  HTML::cabeceras(array('title'=>'Pruebas LIGA 3',
 			'description'=>'Página de pruebas para LIGA 3',
 			'css'        =>'util/LIGA.css',
 			'style'      =>'label { width:100px; }'
@@ -42,10 +40,10 @@
  // Guardo el bufer para colocarlo en el layout
  ob_start();
  // Tabla con instancias
-  $cols = array('*', '-contraseña', 'Columna nueva'=>'<a href="?borrar=@[0]">Borrar</a>');
-  $join = array('depende'=>$liga, 'usuario'=>$usuarios, 'puesto'=>$puestos);
+  $cols = array('*', '-contraseña', 'Acción'=>'<a href="?borrar=@[0]">Borrar</a>');
+  $join = array('depende'=>$liga);
   $pie  = '<th colspan="@[numCols]">Total de instancias: @[numReg]</th>';
-  HTML::tabla($liga, 'Instancias de '.$tabla, $cols, false, $join, $pie);
+  HTML::tabla($liga, 'Instancias de '.$tabla, $cols, true, $join, $pie);
   
   // Formulario para crear nuevas instancias
   $props  = array('form'=>'method="POST" action="?accion=insertar"',
@@ -57,12 +55,12 @@
   $props  = array('form'=>array('method'=>'POST', 'action'=>'?accion=modificar'), 'prefid'=>'algo',
 		  'input[puesto]'=>array('required'=>'required'));
   $cual   = !empty($_POST['cual']) ? $_POST['cual'] : '';
-  $props_select = array('select'=>array('name'=>'cual', 'id'=>'algocual'),
-						'option'=>array('value'=>'@[0]'),
-						"option@si('$cual'=='@[0]')"=>array('selected'=>'selected'));
-  $select = HTML::selector($liga, 1, $props_select, $join, true, 16);
+  $select = HTML::selector($liga, 1, array('select'=>array('name'=>'cual', 'id'=>'algocual'),
+							 'option'=>array('value'=>'@[0]'),
+							 "option@si('$cual'=='@[0]')"=>array('selected'=>'selected')), array('depende'=>$liga)
+			   );
   $campos = array('cual'=>$select, '*', '-fecha');
-  HTML::forma($liga, 'Modificar '.$tabla, $campos, $props, true);
+  HTML::forma($liga, 'Modificar '.$tabla, $campos, $props, true);//*/
  $cont = ob_get_clean();
  
   // Estuctura el cuerpo de la página
@@ -70,3 +68,4 @@
   echo '<a href="enrutador/">Probar enrutador (RUTA)</a>';
   // Cierre de etiquetas HTML
   HTML::pie();
+?>

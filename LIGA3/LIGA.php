@@ -20,8 +20,8 @@
  class LIGA {
     private $s, $q, $l;
     private $bd;
-    public  $meta = array();
-    public  $info = array();
+    private  $meta = array();
+    private  $info = array();
     private $idx = 0;
     // Crea una nueva instancia del objeto LIGA a partir de los parámetros
     function __construct($s1, $s2='', $s3='') {
@@ -51,7 +51,8 @@
     function info($f=false) {
         $i = &$this->info;
         if ((is_array($i) && count($i) === 0) || $f) {
-            return ($i = $this->bd->info($this->s, $this->q, $this->l));
+            $i = $this->bd->info($this->s, $this->q, $this->l);
+            return $i;
         }
         return $i;
     }
@@ -75,7 +76,7 @@
     function col2num($col) {
         if (is_string($col) && $col != '') {
             $cols = array_keys($this->meta());
-            $pos = array_search(trim($col), $cols);
+            $pos = array_search($col, $cols);
             if ($pos !== false) {
                 return $pos;
             }
@@ -113,18 +114,19 @@
     }
     // Obtiene una fila (arreglo simple o asociativo) a partir del índice dado
     function fila($ind, $cols=true) {
-        $info = $this->info();
-        if (isset($info[$ind])) {
-            if ($cols) {
-                $llaves = array_keys($this->meta());
-                $valors = array_slice($info[$ind], 0, count($llaves));
-                if (count($llaves) === count($valors)) {
-                    return array_combine($llaves, $valors);
-                }
-            }
-            return $info[$ind];
-        }
-        return null;
+      $info = $this->info();
+      if (isset($info[$ind])) {
+          if ($cols) {
+              $llaves = array_keys($this->meta());
+              if (count($llaves) == count($info[$ind])) {
+               return array_combine($llaves, array_slice($info[$ind], 0, count($llaves)));
+              } else {
+               return array_combine($llaves, $info[$ind]);
+              }
+          }
+          return $info[$ind];
+      }
+      return null;
     }
     // Obtiene algún dato a partir del índice y el nombre de la columna
     function dato($ind, $col) {
@@ -178,7 +180,6 @@
         $info = $this->info();
         if (isset($info[$ind][$col])) {
             $this->info[$ind][$col] = $dato;
-            //var_dump($this->info());
             return $dato;
         }
         return null;
@@ -190,11 +191,9 @@
             $f = $pos2;
             $cont = substr($cad, $i, $f-$i+1);
             $pars = explode(',', substr($cad, $i+2, $f-$i-2), 2);
-            if (isset($pars[1])) {
-                $res = $this->existe($pars[0]) ? $this->p($pars[0], $pars[1]) : $this->d($ind, $pars[0]);
-            } else {
-                $res = $this->d($ind, $pars[0]);
-            }
+            $pars[0] = html_entity_decode($pars[0], ENT_QUOTES, 'UTF-8');
+            $res = (isset($pars[1])) ? $this->p($pars[0], $pars[1]) : $this->d($ind, $pars[0]);
+            $res = htmlentities($res, ENT_NOQUOTES, 'UTF-8');
             if (!$this->existe($pars[0])) {
                 $pars = trim($pars[0]);
                 if ($pars === 'numReg') {
@@ -223,6 +222,7 @@
             $ret  = @eval($cod.';');
             $res  = ob_get_clean();
             $res .= $ret;
+            $res  = htmlentities($res, ENT_NOQUOTES, 'UTF-8');
             $res  = ($comillas) ? "'$res'" : $res;
             $cad  = str_replace($cont, $res, $cad);
             $cad  = $this->ejec($cad, $comillas);
